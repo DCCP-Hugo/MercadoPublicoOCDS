@@ -33,6 +33,7 @@ library(writexl)
 library(shinyWidgets)
 library(plotly)
 #library(sodium)
+# shinycssloaders
 
 
 #Observaciones
@@ -73,24 +74,36 @@ rm(pw) # removes the password
 #Cerrar todas las conexiones de postgress
 # lapply(dbListConnections(drv = dbDriver("PostgreSQL")), function(x) {dbDisconnect(conn = x)})
 
-
+# initdata <- sqlQuery(dbconnection,paste("select * from MyTable;")) odbcClose(channel) 
 ############################################################
 #Consultas en Postgres para consultar datos
 ############################################################
 
 #########################################################################################
 #Setear encoding a windows-1252
-#No es posible utilizar un encoding UTF8 exportando de postgress a R en WINDOWS, por lo que se usa el estándar windows-1252.
-#Independiente de ésto, al servidor se guardan los datos como UTF-8
 ##Omitir el siguiente código si se utiliza Linux o MAC.
-# postgresqlpqExec(con, "SET client_encoding = 'windows-1252'") 
 postgresqlpqExec(con, "SET client_encoding = 'UTF8'") 
 #########################################################################################
 
+#########################################################################################
+#########################################################################################
 #Funciones
 #Link Licitacion
 createLinkLic <- function(val) {
   sprintf('<a href="http://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=%s" class="btn btn-primary" target="_blank">Link Lic</a>',val)
+}
+
+#Link a chileproveedores
+# createLinkProv <- function(val) {
+#   sprintf('<a href="http://www.chileproveedores.cl/Modulos/resultadobusquedapublica.aspx?r=%s&e=0" 
+#           target="_blank" class="btn btn-primary" style="height:20px;width:55px;font-size:10px"
+#           ">LinkProv</a>',val)
+# }
+
+createLinkProv <- function(val) {
+  sprintf('<a href="http://www.chileproveedores.cl/Modulos/resultadobusquedapublica.aspx?r=%s&e=0" 
+          target="_blank" class="btn btn-primary" 
+          >LinkProv</a>',val)
 }
 
 ###Función para formatear números en gráficos###
@@ -108,7 +121,21 @@ set_utf8 <- function(x) {
   x
 }
 
+#Extrae último dígito
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x))
+}
 
+#Agregar puntuación y guión a rut sin formato
+Mod_Rut2 <- function(rut){
+  dig<- substrRight(rut,1)
+  num <- gsub('.{1}$', '', rut)
+  num <- sub("\\-.*", "", num)%>% as.integer() %>% format(., digits = 0, big.mark = ".", decimal.mark = ",")
+  Rut<-trimws(paste0(num,"-",dig)) %>%toupper()
+  Rut
+}
+#########################################################################################
+#########################################################################################
 #Todas las consultas quedan en función de fecha calendario
 
 #Obtener todos los organismos que licitaron para añadir a filtro
@@ -174,7 +201,7 @@ ListRegionSuc<- c("Todo",ListRegionSuc)
 DFRubros <- set_utf8(dbGetQuery(con,"select  * from rubros" ))
 
 #Obtener monto máximo de licitación
-MaxMonto <- set_utf8(dbGetQuery(con, "select max(monto_lic)  
+MaxMonto <- set_utf8(dbGetQuery(con, "select max(monto_adj)  
                         from licitaciones"))
 MaxMonto <- round(MaxMonto$max[1])
 
@@ -255,6 +282,10 @@ ui <- dashboardPage(
                             dateRangeInput(inputId="TiempoLic",label="Fecha",start=Sys.Date()-30,end=Sys.Date(),
                                            #min=Sys.Date() - 366,max=Sys.Date()-2,
                                            separator="hasta",weekstart=1,autoclose=TRUE,language="es", startview = "month"),
+                            radioButtons(inputId = "RadioLic" , label = "Ingreso etapa licitación" , 
+                                         choices = list('Adjudicación' = 'adjudicacion', 'Publicación' = 'publicacion'), 
+                                         selected = 'adjudicacion', inline= TRUE),
+                            
                             actionBttn(inputId="BotonFiltLic", label = "Consultar", icon = NULL, style = "float",color = "success",size="xs"),
                             
                             pickerInput(inputId="RegFilterLic",label="Región (Unidad de Compra)",choices = ListRegionComp, selected = "Todo",
@@ -265,20 +296,27 @@ ui <- dashboardPage(
                                                      `select-all-text` = "Seleccionar Todo"),multiple=TRUE
                             ),
                             
-                            pickerInput(inputId="InstFilterLic",label="Institución",choices = ListOrgLic, selected = "Todo",
-                                        options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                                                     showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                                                     selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                                                     `deselect-all-text` = "Quitar Todo",
-                                                     `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            ),
-                            pickerInput(inputId="UcompFilterLic",label="Unidad de compra",choices = ListUnCompraLic, selected = "Todo",
-                                        options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                                                     showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                                                     selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                                                     `deselect-all-text` = "Quitar Todo",
-                                                     `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            ),
+                            # pickerInput(inputId="InstFilterLic",label="Institución",choices = ListOrgLic, selected = "Todo",
+                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
+                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
+                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
+                            #                          `deselect-all-text` = "Quitar Todo",
+                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
+                            # ),
+                            
+                            selectizeInput( inputId="InstFilterLic", label = "Institución", choices=ListOrgLic,  multiple=TRUE),
+                            
+                            
+                            # pickerInput(inputId="UcompFilterLic",label="Unidad de compra",choices = ListUnCompraLic, selected = "Todo",
+                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
+                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
+                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
+                            #                          `deselect-all-text` = "Quitar Todo",
+                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
+                            # ),
+                            
+                            selectizeInput( inputId="UcompFilterLic", label = "Unidad de compra", choices=ListUnCompraLic,  multiple=TRUE),
+                            
                             pickerInput(inputId="TipoFilterLic",label="Tipo de Licitación",choices = ListTipoLic, selected = "Todo",
                                         options=list(liveSearch=TRUE, liveSearchStyle="contains",
                                                      showTick=TRUE,size=4,noneSelectedText="Elija opción",
@@ -305,7 +343,11 @@ ui <- dashboardPage(
                             #                                   showTick=TRUE,size=4,noneSelectedText="Elija opción",
                             #                                   selectedTextFormat="count",style="btn-primary"),multiple=TRUE
                             # ),
-                            # 
+                            #
+                            
+                            selectizeInput( inputId="EmpresaFilterLic", label = "Empresa", choices=ListEmprLic,  multiple=TRUE),
+                            
+                            
                             numericRangeInput(
                               inputId = "MontoFiltLic", label = "Rango de monto en Pesos:",
                               value = c(0, MaxMonto), separator = "hasta"
@@ -394,37 +436,42 @@ server <- function(session,input, output) {
   #Filtro Fecha tabla Licitaciones
   dataLicFecha <- eventReactive(
     input$BotonFiltFechaLic, {
-      DetalleLic <- set_utf8(dbGetQuery(con, paste0(
-        "    select
+      
+      if(input$RadioLic == 'adjudicacion'){
+        DetalleLic <- set_utf8(dbGetQuery(con, paste0(
+          "select
           lic.*,
-        case when lic.moneda = 'CLP' then lic.monto_lic else
-        lic.monto_lic * cm.cambioclp end as monto_clp
+        case when lic.moneda = 'CLP' then lic.monto_adj else
+        lic.monto_adj * cm.cambioclp end as monto_clp
         from licitaciones as lic
         left join cambio_moneda as cm
         on cast(extract(year from lic.fecha_apertura) as integer) = cm.anio and
         cast(extract(month from lic.fecha_apertura) as integer) = cm.mes
         and lic.moneda = cm.moneda
 
-        where etapa_lic = 'adjudicacion'
+        where etapa_lic = '", input$RadioLic,"'
 
         and
         fecha_apertura between '",input$TiempoLic[1], "' and '",input$TiempoLic[2],"'")))
-      
-      
-      # DetalleLic <- set_utf8(dbGetQuery(con, paste0(
-      #   "    select
-      #   lic.*,
-      #   case when lic.moneda = 'CLP' then lic.monto_lic else
-      #   lic.monto_lic * cm.cambioclp end as monto_clp
-      #   from licitaciones as lic
-      #   left join cambio_moneda as cm
-      #   on cast(extract(year from lic.fecha_apertura) as integer) = cm.anio and
-      #   cast(extract(month from lic.fecha_apertura) as integer) = cm.mes
-      #   and lic.moneda = cm.moneda
-      #   
-      #   where etapa_lic = 'adjudicacion'")))
-      
-      
+        
+      }else{
+        DetalleLic <- set_utf8(dbGetQuery(con, paste0(
+          "select
+          lic.*,
+          case when lic.moneda = 'CLP' then lic.monto_est else
+          lic.monto_adj * cm.cambioclp end as monto_clp
+          from licitaciones as lic
+          left join cambio_moneda as cm
+          on cast(extract(year from lic.fecha_apertura) as integer) = cm.anio and
+          cast(extract(month from lic.fecha_apertura) as integer) = cm.mes
+          and lic.moneda = cm.moneda
+          
+          where etapa_lic = '", input$RadioLic,"'
+          and
+          fecha_apertura between '",input$TiempoLic[1], "' and '",input$TiempoLic[2],"'")))
+        
+      }
+
       #Setear fechas 1980 a NA. Al intentar con sapply me modifica los posixct a numerics
       for(j in 1:nrow(DetalleLic)){
         if(year(DetalleLic$fecha_adj[j]) == 1980)
@@ -436,23 +483,6 @@ server <- function(session,input, output) {
   
   
   #Filtro Fecha tabla items
-  #V2, se agregan montos en CLP
-  
-  
-  # dataLicItem <- eventReactive(
-  #   input$BotonFiltFechaLic, {
-  #     DetalleItem <- set_utf8(dbGetQuery(con, paste0(
-  #       "select  items.*,rubros.nombreproducto_onu, id_nivel3, nombre_nivel3,nombre_nivel2, nombre_nivel1
-  #       from items 
-  #       inner join licitaciones on licitaciones.id_lic = items.id_lic
-  #       left join rubros on rubros.idproducto_onu = items.idproducto_onu
-  #       where  etapa_lic = 'adjudicada' and
-  #       fecha_apertura between '",input$TiempoLic[1], "' and '",input$TiempoLic[2],"'")))
-  # 
-  #     DetalleItem
-  #   }
-  # )
-  
   
   dataLicItem <- eventReactive(
     input$BotonFiltFechaLic, {
@@ -468,7 +498,7 @@ server <- function(session,input, output) {
         on cast(extract(year from lic.fecha_apertura) as integer) = cm.anio 
         and cast(extract(month from lic.fecha_apertura) as integer) = cm.mes
         and lic.moneda = cm.moneda
-        where  etapa_lic = 'adjudicacion' and
+        where  etapa_lic = '", input$RadioLic,"' and
         fecha_apertura between '",input$TiempoLic[1], "' and '",input$TiempoLic[2],"'")))
       
       DetalleItem
@@ -482,18 +512,12 @@ server <- function(session,input, output) {
         "select  proveedores.* 
         from proveedores 
         inner join licitaciones on licitaciones.id_lic = proveedores.id_lic
-        where  etapa_lic = 'adjudicacion' and
+        where  etapa_lic = '", input$RadioLic,"' and
         licitaciones.fecha_apertura between '",input$TiempoLic[1], "' and '",input$TiempoLic[2],"'")))
       
       DetalleProv
     }
   )
-  
-  # DetalleProv <- set_utf8(dbGetQuery(con, paste0(
-  #   "select  proveedores.* 
-  #   from proveedores 
-  #   inner join licitaciones on licitaciones.id_lic = proveedores.id_lic
-  #   where  etapa_lic = 'adjudicacion' ")))
   
 
   #Datos para tabla de rubros
@@ -580,50 +604,52 @@ server <- function(session,input, output) {
     }  
   )
   
-  #Filtro CLP
-  
+  #Filtro proveedor
   dataLicAdj6<- eventReactive(
     input$BotonFiltLic, {
-      if(input$MontoFiltLic[1] ==0 && input$MontoFiltLic[2] == MaxMonto){
+      if(!is.null(input$EmpresaFilterLic)){
+        
+        if(input$EmpresaFilterLic =="Todo"){
+          dataLicAdj5()
+        }else{
+          
+          #Generar una tabla de items solo con las licitaciones filtradas hasta este punto
+          AuxProv<- subset(dataLicProv(),dataLicProv()$nombre_empresa %in% input$EmpresaFilterLic)
+          semi_join(dataLicAdj5(),AuxProv, by='id_lic')
+        }
+      }else{
         dataLicAdj5()
+      }
+    }  
+  )
+  
+  
+  #Filtro CLP
+  
+  dataLicAdj7<- eventReactive(
+    input$BotonFiltLic, {
+      if(input$MontoFiltLic[1] ==0 && input$MontoFiltLic[2] == MaxMonto){
+        dataLicAdj6()
 
       } else{
-        subset(dataLicAdj5(),dataLicAdj5()$monto_lic >= input$MontoFiltLic[1] & dataLicAdj5()$monto_lic <= input$MontoFiltLic[2] | is.na(dataLicAdj5()$monto_lic))
+        subset(dataLicAdj6(),dataLicAdj6()$monto_adj >= input$MontoFiltLic[1] & 
+                 dataLicAdj6()$monto_adj <= input$MontoFiltLic[2] | is.na(dataLicAdj6()$monto_adj))
       }
     }
   )
 
   #Filtro Cat productos
-  
-  dataLicAdj7<- eventReactive(
+  dataLicAdj8<- eventReactive(
     input$BotonFiltLic, {
       if(!is.null(input$CatProdFilterLic)){
         
         if(input$CatProdFilterLic =="Todo"){
-          dataLicAdj6()
+          dataLicAdj7()
         }else{
           
           #Generar una tabla de items solo con las licitaciones filtradas hasta este punto
           AuxItem<- subset(dataLicItem(),dataLicItem()$nombre_nivel3 %in% input$CatProdFilterLic)
-          semi_join(dataLicAdj6(),AuxItem, by='id_lic')
-        }
-      }else{
-        dataLicAdj6()
-      }
-    }  
-  )
-  
-  #Filtro  productos onu
-  
-  dataLicAdj8<- eventReactive(
-    input$BotonFiltLic, {
-      if(!is.null(input$ProdOnuFilterLic)){
-        
-        if(input$ProdOnuFilterLic =="Todo"){
-          dataLicAdj7()
-        }else{
-          AuxItem2<- subset(dataLicItem(),dataLicItem()$nombreproducto_onu %in% input$ProdOnuFilterLic)
-          semi_join(dataLicAdj7(),AuxItem2, by='id_lic')
+          semi_join(dataLicAdj7(),AuxItem, by='id_lic')
         }
       }else{
         dataLicAdj7()
@@ -631,17 +657,34 @@ server <- function(session,input, output) {
     }  
   )
   
-  dataLicAdj9<- reactive({
+  #Filtro  productos onu
+  dataLicAdj9<- eventReactive(
+    input$BotonFiltLic, {
+      if(!is.null(input$ProdOnuFilterLic)){
+        
+        if(input$ProdOnuFilterLic =="Todo"){
+          dataLicAdj8()
+        }else{
+          AuxItem2<- subset(dataLicItem(),dataLicItem()$nombreproducto_onu %in% input$ProdOnuFilterLic)
+          semi_join(dataLicAdj8(),AuxItem2, by='id_lic')
+        }
+      }else{
+        dataLicAdj8()
+      }
+    }  
+  )
+  
+  dataLicAdj10<- reactive({
     d <- event_data("plotly_click", source ="PlotCompLic" )
     f <- event_data("plotly_click", source ="PlotEstadoLic" )
     T1 <- if(is.null(d) & is.null(f)){
-      dataLicAdj8()
+      dataLicAdj9()
     }else if(!is.null(d) & is.null(f)){
-      subset(dataLicAdj8(), dataLicAdj8()$nombre_institucion == as.character(d$key))
+      subset(dataLicAdj9(), dataLicAdj9()$nombre_institucion == as.character(d$key))
     } else if (is.null(d) & !is.null(f)){
-      subset(dataLicAdj8(), dataLicAdj8()$estado_lic == as.character(f$key))
+      subset(dataLicAdj9(), dataLicAdj9()$estado_lic == as.character(f$key))
     } else if (!is.null(d) & !is.null(f)){
-      dataLicAdj8()
+      dataLicAdj9()
     }
     
   })
@@ -672,15 +715,14 @@ server <- function(session,input, output) {
   })
   
   
-
   ############################################################
   #Graficos
   ############################################################
   
   #Gráfico de burbuja compradores.
   output$PlotCompLic<- renderPlotly({
-    GrafCompLic1 <- dataLicAdj8() %>% group_by(nombre_institucion) %>% summarise(., Cantidad = n()) 
-    GrafCompLic2 <- dataLicAdj8() %>% group_by(nombre_institucion) %>% summarise(., Monto = sum(monto_clp, na.rm=TRUE)) 
+    GrafCompLic1 <- dataLicAdj9() %>% group_by(nombre_institucion) %>% summarise(., Cantidad = n()) 
+    GrafCompLic2 <- dataLicAdj9() %>% group_by(nombre_institucion) %>% summarise(., Monto = sum(monto_clp, na.rm=TRUE)) 
     GrafCompLic <- inner_join(GrafCompLic1,GrafCompLic2, by="nombre_institucion") %>% arrange(desc(Monto,Cantidad)) 
     GrafCompLic <- GrafCompLic %>% filter(., !is.na(Monto))
     GrafCompLic <- head(GrafCompLic,30)
@@ -699,7 +741,7 @@ server <- function(session,input, output) {
                 marker = list( opacity = 0.5,sizemode= 'diameter'),
                 hoverinfo = 'text',
                 text = ~paste('<b>Institución:</b>', nombre_institucion, '<br><b>Cantidad Lic:</b>', comma3(Cantidad),'<br><b>Monto Lic:</b>', trimws(comma3(Monto)) )) %>%
-      layout(title = '<b>Montos vs cantidad de Lic adjudicadas por Comprador</b>',
+      layout(title = '<b>Montos(CLP) vs cantidad de Lic por Comprador</b>',
              xaxis = list(showgrid = FALSE),
              yaxis = list(showgrid = FALSE),
              showlegend = FALSE)
@@ -708,73 +750,77 @@ server <- function(session,input, output) {
   
   
   #Gráfico de burbuja Proveedores.
+    output$PlotProvLic<- renderPlotly({
+      if(input$RadioLic == "publicacion"){
+    }else{
+      #Identificar licitaciones que solo tengan 1 proveedor adjudicado
+      #Abarca aproximadamente el 82% de todas las licitaciones en los últimos 3 meses
+      DetalleProvPlot <- dataLicProv() %>% group_by(.,id_lic) %>% summarise(., suma = n()) %>% filter(., suma ==1) %>% select(.,id_lic)
+      #Join con tabla licitaciones para obtener todos los campos de licitación y montos
+      DetalleProvPlot2 <- inner_join(dataLicAdj9(),DetalleProvPlot, by ='id_lic')
+      #Ahora, juntarlo con licitaciones para obtener monto
+
+      DetalleProvPlot3 <- inner_join(DetalleProvPlot2,dataLicProv(),by ='id_lic' ) %>% group_by(nombre_empresa ) %>% 
+        summarise(.,Transado = sum(monto_clp))
+
+      DetalleProvPlot4 <- inner_join(DetalleProvPlot2,dataLicProv(),by ='id_lic' ) %>% group_by(nombre_empresa ) %>% 
+        summarise(.,Cant_Lic= n())
+      DetalleProvPlot5 <- inner_join(DetalleProvPlot3,DetalleProvPlot4, by='nombre_empresa') %>% arrange(., desc(Transado))
+    
+      DetalleProvPlot5 <-head(DetalleProvPlot5,30)
+      #gráfico
+      key <- DetalleProvPlot5$nombre_empresa
+      p<- plot_ly(DetalleProvPlot5, 
+                  x = ~Cant_Lic, 
+                  y = ~Transado, type = 'scatter', mode = 'markers', color = ~nombre_empresa, colors = 'Paired',
+                  #variables para unir con filtros
+                  source = "PlotProvLic",
+                  key = ~key,
+                  #customdata = ~customdata,
+                  size = ~Transado,sizes = c(10, 50),
+                  marker = list( opacity = 0.5,sizemode= 'diameter'),
+                  hoverinfo = 'text',
+                  text = ~paste('<b>Proveedor:</b>', nombre_empresa, '<br><b>Cantidad Lic:</b>', comma3(Cant_Lic),'<br><b>Monto Lic:</b>', trimws(comma3(Transado)) )) %>%
+        layout(title = '<b>Montos(CLP) vs cantidad de Licitaciones adjudicadas por 1 proveedor</b>',
+               xaxis = list(showgrid = FALSE),
+               yaxis = list(showgrid = FALSE),
+               showlegend = FALSE)
+      
+      
+      ggplotly(p)
+    }
+    })
+    
   
-  output$PlotProvLic<- renderPlotly({
-    #Identificar licitaciones que solo tengan 1 proveedor adjudicado
-    #Abarca aproximadamente el 82% de todas las licitaciones en los últimos 3 meses
-    DetalleProvPlot <- dataLicProv() %>% group_by(.,id_lic) %>% summarise(., suma = n()) %>% filter(., suma ==1) %>% select(.,id_lic)
-    #Join con tabla licitaciones para obtener todos los campos de licitación y montos
-    DetalleProvPlot2 <- inner_join(dataLicAdj8(),DetalleProvPlot, by ='id_lic')
-    #Ahora, juntarlo con licitaciones para obtener monto
-    # DetalleProvPlot3 <- inner_join(dataLicAdj8(),DetalleProvPlot3,by ='id_lic' ) %>% group_by()
-    DetalleProvPlot3 <- inner_join(DetalleProvPlot2,dataLicProv(),by ='id_lic' ) %>% group_by(id_sucursal, nombre_empresa ) %>% 
-      summarise(.,Transado = sum(monto_clp))
-    
-    DetalleProvPlot4 <- inner_join(DetalleProvPlot2,dataLicProv(),by ='id_lic' ) %>% group_by(id_sucursal ) %>% 
-      summarise(.,Cant_Lic= n())
-    
-    DetalleProvPlot5 <- inner_join(DetalleProvPlot3,DetalleProvPlot4, by='id_sucursal') %>% arrange(., desc(Transado))
-    # DetalleProvPlot5$Transado <- round(DetalleProv5$Transado, digits=0)
-    DetalleProvPlot5 <-head(DetalleProvPlot5,30)
-    #gráfico
-    key <- DetalleProvPlot5$nombre_empresa
-    p<- plot_ly(DetalleProvPlot5, 
-                x = ~Cant_Lic, 
-                y = ~Transado, type = 'scatter', mode = 'markers', color = ~nombre_empresa, colors = 'Paired',
-                #variables para unir con filtros
-                source = "PlotProvLic",
-                key = ~key,
-                #customdata = ~customdata,
-                size = ~Transado,sizes = c(10, 50),
-                marker = list( opacity = 0.5,sizemode= 'diameter'),
-                hoverinfo = 'text',
-                text = ~paste('<b>Proveedor:</b>', nombre_empresa, '<br><b>Cantidad Lic:</b>', comma3(Cant_Lic),'<br><b>Monto Lic:</b>', trimws(comma3(Transado)) )) %>%
-      layout(title = '<b>Montos vs cantidad de Lic adjudicadas por Comprador</b>',
-             xaxis = list(showgrid = FALSE),
-             yaxis = list(showgrid = FALSE),
-             showlegend = FALSE)
 
-
-    ggplotly(p)
-  })
   #   
   #   
   
   ####Grafico Estados licitaciones
-  output$PlotEstadoLic<- renderPlotly({
-    GrafEstadoLic1 <- dataLicAdj9() %>% group_by(nombre_institucion, estado_lic) %>% summarise(., CantidadN = n()) 
-    GrafEstadoLic2 <- GrafEstadoLic1 %>% group_by(estado_lic) %>% summarise(.,Cantidad = sum(CantidadN))
-    GrafEstadoLic3 <- GrafEstadoLic1 %>% group_by(estado_lic) %>% summarise(.,Cantidad = sum(CantidadN)) %>% summarize(Total = sum(Cantidad))
-    GrafEstadoLic2 <- GrafEstadoLic2 %>% mutate( ., Total =GrafEstadoLic3$Total[1]) %>% mutate(., Porcentaje= as.integer((Cantidad/Total)*100))
-    key <- GrafEstadoLic2$estado_lic
-    
-    p <- plot_ly(GrafEstadoLic2,
-                 x = ~estado_lic,
-                 y = ~Cantidad,
-                 color = ~estado_lic, colors = 'Paired',
-                 name = "Licitaciones por estado",
-                 type = "bar",
-                 hoverinfo = 'text',
-                 key = ~key,
-                 source = "PlotEstadoLic",
-                 text = ~paste0('<b>Estado: </b>', estado_lic, '<br><b>Cantidad: </b>', comma3(Cantidad), '<br><b>Porcentaje: </b>',comma3(Porcentaje),"%")) %>%
-      layout(title = '<b>Frecuencia de Estados de Licitaciones</b>',
-             #xaxis = list(showgrid = FALSE),
-             yaxis = list(showgrid = FALSE),
-             showlegend = FALSE)
-    
-    ggplotly(p)
-  })
+  # output$PlotEstadoLic<- renderPlotly({
+  #   GrafEstadoLic1 <- dataLicAdj9() %>% group_by(nombre_institucion, estado_lic) %>% summarise(., CantidadN = n()) 
+  #   GrafEstadoLic2 <- GrafEstadoLic1 %>% group_by(estado_lic) %>% summarise(.,Cantidad = sum(CantidadN))
+  #   GrafEstadoLic3 <- GrafEstadoLic1 %>% group_by(estado_lic) %>% summarise(.,Cantidad = sum(CantidadN)) %>% summarize(Total = sum(Cantidad))
+  #   GrafEstadoLic2 <- GrafEstadoLic2 %>% mutate( ., Total =GrafEstadoLic3$Total[1]) %>% mutate(., Porcentaje= as.integer((Cantidad/Total)*100))
+  #   key <- GrafEstadoLic2$estado_lic
+  #   
+  #   p <- plot_ly(GrafEstadoLic2,
+  #                x = ~estado_lic,
+  #                y = ~Cantidad,
+  #                color = ~estado_lic, colors = 'Paired',
+  #                name = "Licitaciones por estado",
+  #                type = "bar",
+  #                hoverinfo = 'text',
+  #                key = ~key,
+  #                source = "PlotEstadoLic",
+  #                text = ~paste0('<b>Estado: </b>', estado_lic, '<br><b>Cantidad: </b>', comma3(Cantidad), '<br><b>Porcentaje: </b>',comma3(Porcentaje),"%")) %>%
+  #     layout(title = '<b>Frecuencia de Estados de Licitaciones</b>',
+  #            #xaxis = list(showgrid = FALSE),
+  #            yaxis = list(showgrid = FALSE),
+  #            showlegend = FALSE)
+  #   
+  #   ggplotly(p)
+  # })
   
   ####Grafico Oferentes por licitación
   output$PlotOferentesLic<- renderPlotly({
@@ -807,7 +853,7 @@ server <- function(session,input, output) {
   
   output$PlotItemsLic<- renderPlotly({
     
-    ProdItemBar <- semi_join(dataLicItem(), dataLicAdj9(), by="id_lic"  )
+    ProdItemBar <- semi_join(dataLicItem(), dataLicAdj10(), by="id_lic"  )
     ProdItemBar <- ProdItemBar %>% group_by(idproducto_onu, nombreproducto_onu) %>% summarise(MontoProd = sum(costo_u_clp* cantidad)) %>%
          arrange(desc(MontoProd)) %>% head(10)
     #PAra ordenarlos en gráfico por monto
@@ -836,7 +882,7 @@ server <- function(session,input, output) {
   
   #TABLA Licitaciones adjudicadas
   output$DataTabLic <- renderDT({
-    datatable( asd <- dataLicAdj9() %>% mutate(Enlace = createLinkLic(id_lic)) %>% select(Enlace, everything())
+    datatable( asd <- dataLicAdj10() %>% mutate(Enlace = createLinkLic(id_lic)) %>% select(Enlace, everything())
                ,
                escape = F,
                rownames = F,
@@ -875,11 +921,10 @@ server <- function(session,input, output) {
     shiny::validate(
       need(length(input$DataTabLic_rows_selected) > 0, "")
     )    
-    LicSelect <- dataLicAdj9()[as.integer(input$DataTabLic_rows_selected), ]$id_lic
+    LicSelect <- dataLicAdj10()[as.integer(input$DataTabLic_rows_selected), ]$id_lic
     subset(dataLicItem(),dataLicItem()$id_lic %in% LicSelect)
     
   })
-  
   
   #TABLA items adjudicadas
   output$DataTabItem <- renderDT({
@@ -923,7 +968,7 @@ server <- function(session,input, output) {
       need(length(input$DataTabLic_rows_selected) > 0, "")
     )    
     
-    LicSelect <- dataLicAdj8()[as.integer(input$DataTabLic_rows_selected), ]$id_lic
+    LicSelect <- dataLicAdj10()[as.integer(input$DataTabLic_rows_selected), ]$id_lic
     subset(dataLicProv(),dataLicProv()$id_lic %in% LicSelect)
     
   })
@@ -931,7 +976,9 @@ server <- function(session,input, output) {
   
   #Generación de tabla
   output$DataTabProv <- renderDT({
-    datatable( asd <- drilldataProv()
+    if(input$RadioLic == "publicacion"){
+    }else{
+    datatable( asd <- drilldataProv() %>% mutate(Enlace = createLinkProv( Mod_Rut2(rut_sucursal))) %>% select(Enlace, everything())
                ,
                escape = F,
                rownames = F,
@@ -959,7 +1006,8 @@ server <- function(session,input, output) {
                  #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
-    )#%>% formatCurrency(c("MontoCLP","MontoUTM"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd2),fontSize = '11px',fontWeight='600')
+    )
+   }    #%>% formatCurrency(c("MontoCLP","MontoUTM"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd2),fontSize = '11px',fontWeight='600')
   })
   
   #TABLA rubros
@@ -1005,10 +1053,15 @@ server <- function(session,input, output) {
   #   }
   # })
   
-  
+  #Cerrar todas las conexiones de postgress una vez termine de usarse la app
+  # session$onSessionEnded(function(){
+  #   lapply(dbListConnections(drv = dbDriver("PostgreSQL")), function(x) {dbDisconnect(conn = x)})
+  #   
+  # })
 
   
 }
+
 
 # Run the application 
 shinyApp(ui = ui, server = server)
