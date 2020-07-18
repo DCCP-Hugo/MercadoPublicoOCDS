@@ -54,7 +54,7 @@ Recomiendo seguir las indicaciones del siguiente video:
 	  
 ## Tecnologías utilizadas
 
-[<img target="_blank" src="https://www.r-project.org/logo/Rlogo.svg" width=200>](https://r-project.org/)
+[<img target="_blank" src="https://www.r-project.org/logo/Rlogo.svg" width=200>](https://r-project.org/) [<img target="_blank" src="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg" width=200>](https://postgresql.org/) 
 
 
     
