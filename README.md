@@ -30,7 +30,13 @@ La instalación se divide en distintas etapas:
 1. Instalación de R y Rstudio
 Recomiendo seguir las indicaciones de este video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=rxsE3Uc_bnU)
-
+	-La versión utilizada para R es la 3.5.2
+	-Recomiendo la última versión de RStudio
+G
 2. Instalación de Postgress
+Recomiendo seguir las indicaciones del siguiente video:
+[Video explicativo de instalación](https://www.youtube.com/watch?v=cHGaDfzJyY4)
+	-Muy importante recordar la constraseña y puerto utilizado.
+	-La instalación estándar es suficiente
 
 3. Instalación de aplicativo
