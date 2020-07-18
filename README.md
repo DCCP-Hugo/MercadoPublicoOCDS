@@ -25,18 +25,36 @@ Ante esta problemática, se desarrolla un aplicativo en R cuyo objetivo es servi
 Describiéndolo de manera más específica, el aplicativo desarrollado en R permite la extracción de los archivos de licitaciones en formato OCDS por el usuario, generar un modelo de datos relacionales en una base de datos en PostgreSQL, alimentar tablas relaciones a partir de archivos JSON, utilizar estas mismas tablas para realizar consultas y alimentar un panel con visualizaciones utilizando Shiny, incluyendo métricas de ejemplo que pueden ser de interés tanto para la sociedad civil como para proveedores.
 
 ## Instalación
-
 La instalación se divide en distintas etapas:
-1. Instalación de R y Rstudio
+1. Instalación de R y Rstudio. 
 Recomiendo seguir las indicaciones de este video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=rxsE3Uc_bnU)
-	-La versión utilizada para R es la 3.5.2
-	-Recomiendo la última versión de RStudio
-G
+    - La versión utilizada para R es la 3.5.2
+    - Recomiendo la última versión de RStudio
+
 2. Instalación de Postgress
 Recomiendo seguir las indicaciones del siguiente video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=cHGaDfzJyY4)
-	-Muy importante recordar la constraseña y puerto utilizado.
-	-La instalación estándar es suficiente
+    - Muy importante recordar la constraseña y puerto ingresado.
+    - La instalación estándar es suficiente
 
-3. Instalación de aplicativo
+3. Configuración de aplicativo:
+
+    - Clonar o descargar este repositorio en su computador
+	- Ejecutar el archivo: __InstalarPackages.R__
+	- Agregar en la aplicación la dirección de las carpetas asociadas
+	- Agregar en la aplicación los datos de la conexión a PostgreSQL
+	
+## Utilización
+1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer
+2. Ejecutar el archivo  __ExtraccionDMV5.R__.
+      - Con una muy buena conexión a internet, toma aproximadamente 15 minutos cargar 1 mes de datos.
+	  - Para configurar R con task manager, leer el archivo:
+	  -  
+	  
+## Tecnologías utilizadas
+[<img target="_blank" src="https://keras.io/img/logo.png" width=200>](https://keras.io/)
+
+
+    
+    
