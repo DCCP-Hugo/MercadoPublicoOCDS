@@ -1,7 +1,7 @@
 ﻿# Aplicación para almacenar y visualizar compras públicas usando el estándar OCDS.
 
-#Tabla de contenido
-* [Motivación](#motivación)
+## Tabla de contenido
+  * [Motivación](#motivación)
 
 ##Motivación
 Actualmente existe gran interés por parte de distintos actores por información en las compras públicas en Chile. Éstos pueden ser la sociedad civil monitoreando el correcto uso de los fondos públicos, proveedores buscando oportunidades de negocio, entre otros.
