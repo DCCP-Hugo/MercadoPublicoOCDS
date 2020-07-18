@@ -1,8 +1,13 @@
 ﻿# Aplicación para almacenar y visualizar compras públicas usando el estándar OCDS.
 
 ## Tabla de contenido
+  * [Demo](#demo)
+  * [Resumen](#resumen)
   * [Motivación](#motivación)
   * [Instalación](#instalación)
+
+## Resumen
+Se desarrolla una aplicación en R, que bajo el ingreso de unos pocos parámetros, descarga automáticamente datos masivos de compras públicas en formato OCDS, los almacena en una base de datos Postgress, y permite la visualización en un panel usando Shiny.
 
 ## Motivación
 Actualmente existe gran interés por parte de distintos actores por información en las compras públicas en Chile. Éstos pueden ser la sociedad civil monitoreando el correcto uso de los fondos públicos, proveedores buscando oportunidades de negocio, entre otros.
@@ -21,4 +26,11 @@ Describiéndolo de manera más específica, el aplicativo desarrollado en R perm
 
 ## Instalación
 
+La instalación se divide en distintas etapas:
+1. Instalación de R y Rstudio
+Recomiendo seguir las indicaciones de este video:
+[Video explicativo de instalación](https://www.youtube.com/watch?v=rxsE3Uc_bnU)
 
+2. Instalación de Postgress
+
+3. Instalación de aplicativo
