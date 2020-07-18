@@ -53,7 +53,8 @@ Recomiendo seguir las indicaciones del siguiente video:
 	  -  
 	  
 ## Tecnologías utilizadas
-[<img target="_blank" src="https://keras.io/img/logo.png" width=200>](https://keras.io/)
+[<img target="_blank" src="https://commons.wikimedia.org/wiki/File:R_logo.svg" width=200>](https://www.r-project.org/)
+ [<img target="_blank" src="https://www.r-project.org/logo/Rlogo.svg " width=200>](https://www.r-project.org/)
 
 
     
