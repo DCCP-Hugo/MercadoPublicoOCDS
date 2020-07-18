@@ -2,8 +2,9 @@
 
 ## Tabla de contenido
   * [Motivación](#motivación)
+  * [Instalación](#instalación)
 
-##Motivación
+## Motivación
 Actualmente existe gran interés por parte de distintos actores por información en las compras públicas en Chile. Éstos pueden ser la sociedad civil monitoreando el correcto uso de los fondos públicos, proveedores buscando oportunidades de negocio, entre otros.
 
 A su vez, existen esfuerzos tanto de organizaciones no gubernamentales (ONG) tales como la “Alianza del gobierno abierto” y Open Contracting Partnership (OCP) entre otros, que establecen lineamientos y recomendaciones para democratizar y abrir los datos públicos hacia la ciudadanía, con fines de transparencia y aumentar la participación de éstos en el monitoreo de las acciones gubernamentales.
@@ -17,5 +18,7 @@ El problema de los datos provenientes de esta API en particular es la gran barre
 Ante esta problemática, se desarrolla un aplicativo en R cuyo objetivo es servir como “molde” para disminuir algunas de las barreras de entrada en utilización de datos de compras públicas a la ciudadanía, facilitando la extracción, manipulación y visualización de los datos. 
 
 Describiéndolo de manera más específica, el aplicativo desarrollado en R permite la extracción de los archivos de licitaciones en formato OCDS por el usuario, generar un modelo de datos relacionales en una base de datos en PostgreSQL, alimentar tablas relaciones a partir de archivos JSON, utilizar estas mismas tablas para realizar consultas y alimentar un panel con visualizaciones utilizando Shiny, incluyendo métricas de ejemplo que pueden ser de interés tanto para la sociedad civil como para proveedores.
+
+## Instalación
 
 
