@@ -9,13 +9,11 @@
 
 
 #Paquetes utilizados
-#library(tidyr)
 library(dplyr)
 library(DT)
 library(RODBC)
 library(sqldf)
 library(lubridate)
-#library(tibble)
 library(miceadds)
 library(readxl)
 library(httr)
@@ -23,16 +21,11 @@ library(jsonlite)
 library(RPostgreSQL)
 library(stringi)
 library(stringr)
-# library(wordcloud2)
-library(stringr)
 library(shiny)
 library(shinydashboard)
 library(writexl)
-#library(sparkline)
-#library(RColorBrewer)
 library(shinyWidgets)
 library(plotly)
-#library(sodium)
 # shinycssloaders
 
 
@@ -80,8 +73,6 @@ rm(pw) # removes the password
 ############################################################
 
 #########################################################################################
-#Setear encoding a windows-1252
-##Omitir el siguiente código si se utiliza Linux o MAC.
 postgresqlpqExec(con, "SET client_encoding = 'UTF8'") 
 #########################################################################################
 
@@ -94,12 +85,6 @@ createLinkLic <- function(val) {
 }
 
 #Link a chileproveedores
-# createLinkProv <- function(val) {
-#   sprintf('<a href="http://www.chileproveedores.cl/Modulos/resultadobusquedapublica.aspx?r=%s&e=0" 
-#           target="_blank" class="btn btn-primary" style="height:20px;width:55px;font-size:10px"
-#           ">LinkProv</a>',val)
-# }
-
 createLinkProv <- function(val) {
   sprintf('<a href="http://www.chileproveedores.cl/Modulos/resultadobusquedapublica.aspx?r=%s&e=0" 
           target="_blank" class="btn btn-primary" 
@@ -188,14 +173,14 @@ ListRegionComp <- ListRegionComp[,1]
 ListRegionComp<- c("Todo",ListRegionComp)
 
 #Obtener listado de paises proveedor
-ListPaisSuc <- set_utf8(dbGetQuery(con, "select distinct pais_sucursal from proveedores"))
-ListPaisSuc <- ListPaisSuc[,1]
-ListPaisSuc<- c("Todo",ListPaisSuc)
+# ListPaisSuc <- set_utf8(dbGetQuery(con, "select distinct pais_sucursal from proveedores"))
+# ListPaisSuc <- ListPaisSuc[,1]
+# ListPaisSuc<- c("Todo",ListPaisSuc)
 
 #Obtener listado de regiones proveedor
-ListRegionSuc <- set_utf8(dbGetQuery(con, "select distinct region_sucursal from proveedores"))
-ListRegionSuc <- ListRegionSuc[,1]
-ListRegionSuc<- c("Todo",ListRegionSuc)
+# ListRegionSuc <- set_utf8(dbGetQuery(con, "select distinct region_sucursal from proveedores"))
+# ListRegionSuc <- ListRegionSuc[,1]
+# ListRegionSuc<- c("Todo",ListRegionSuc)
 
 #Obtener tabla con rubros
 DFRubros <- set_utf8(dbGetQuery(con,"select  * from rubros" ))
@@ -288,13 +273,15 @@ ui <- dashboardPage(
                             
                             actionBttn(inputId="BotonFiltLic", label = "Consultar", icon = NULL, style = "float",color = "success",size="xs"),
                             
-                            pickerInput(inputId="RegFilterLic",label="Región (Unidad de Compra)",choices = ListRegionComp, selected = "Todo",
-                                        options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                                                     showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                                                     selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                                                     `deselect-all-text` = "Quitar Todo",
-                                                     `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            ),
+                            # pickerInput(inputId="RegFilterLic",label="Región (Unidad de Compra)",choices = ListRegionComp, selected = "Todo",
+                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
+                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
+                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
+                            #                          `deselect-all-text` = "Quitar Todo",
+                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
+                            # ),
+                            
+                            selectizeInput( inputId="RegFilterLic", label = "Región (Unidad de Compra)", choices=ListRegionComp,  multiple=TRUE),
                             
                             # pickerInput(inputId="InstFilterLic",label="Institución",choices = ListOrgLic, selected = "Todo",
                             #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
@@ -399,13 +386,14 @@ ui <- dashboardPage(
            box((DTOutput("DataTabItem")),width = 12, title = span(strong("Detalle de Items"),
                                                                 style = "color: black; text-align:center")),
            box((DTOutput("DataTabProv")),width = 8, title = span(strong("Detalle de Proveedores"),
-                                                                 style = "color: black; text-align:center"))
+                                                                 style = "color: black; text-align:center")),
           #,
-          # fluidRow(div(style = "height:15px")),
+           fluidRow(div(style = "height:15px")),
           # downloadButton("DescargarTodoLic","Descargar Tabla Completa" , class = "test1"),
-          # tags$head(tags$style(".test1{background-color:black;} .test1{color: white;} ")),
-          # downloadButton("DescargarFiltLic","Descargar Tabla Filtrada", class = "test1" ),
-          # downloadButton("DescargarClickLic","Descargar Filas Seleccionadas", class = "test1")
+           tags$head(tags$style(".test1{background-color:black;} .test1{color: white;} ")),
+           downloadButton("DescargarFiltLic","Descargar Licitaciones", class = "test1" ),
+           downloadButton("DescargarFiltItem","Descargar Ítems", class = "test1"),
+          downloadButton("DescargarFiltProv","Descargar Proveedores", class = "test1")
           
         )
       ), #Fin tab 1
@@ -477,10 +465,13 @@ server <- function(session,input, output) {
         if(year(DetalleLic$fecha_adj[j]) == 1980)
         {DetalleLic$fecha_adj[j]<- NA} 
       }
+      
+      DetalleLic$fecha_apertura <- as.Date(DetalleLic$fecha_apertura )
+      DetalleLic$fecha_cierre <- as.Date(DetalleLic$fecha_cierre )
+      DetalleLic$fecha_adj <- as.Date(DetalleLic$fecha_adj )
       DetalleLic
     }
   )
-  
   
   #Filtro Fecha tabla items
   
@@ -515,6 +506,7 @@ server <- function(session,input, output) {
         where  etapa_lic = '", input$RadioLic,"' and
         licitaciones.fecha_apertura between '",input$TiempoLic[1], "' and '",input$TiempoLic[2],"'")))
       
+      DetalleProv$rut_sucursal <- Mod_Rut2(DetalleProv$rut_sucursal)
       DetalleProv
     }
   )
@@ -676,13 +668,15 @@ server <- function(session,input, output) {
   
   dataLicAdj10<- reactive({
     d <- event_data("plotly_click", source ="PlotCompLic" )
-    f <- event_data("plotly_click", source ="PlotEstadoLic" )
+    f <- event_data("plotly_click", source ="PlotProvLic" )
     T1 <- if(is.null(d) & is.null(f)){
       dataLicAdj9()
     }else if(!is.null(d) & is.null(f)){
       subset(dataLicAdj9(), dataLicAdj9()$nombre_institucion == as.character(d$key))
     } else if (is.null(d) & !is.null(f)){
-      subset(dataLicAdj9(), dataLicAdj9()$estado_lic == as.character(f$key))
+      prov1 <- subset(dataLicProv(), dataLicProv()$nombre_empresa == as.character(f$key))
+      semi_join(dataLicAdj9(), prov1, by="id_lic") 
+      
     } else if (!is.null(d) & !is.null(f)){
       dataLicAdj9()
     }
@@ -726,8 +720,7 @@ server <- function(session,input, output) {
     GrafCompLic <- inner_join(GrafCompLic1,GrafCompLic2, by="nombre_institucion") %>% arrange(desc(Monto,Cantidad)) 
     GrafCompLic <- GrafCompLic %>% filter(., !is.na(Monto))
     GrafCompLic <- head(GrafCompLic,30)
-    #GrafCompLic$Monto <- as.integer(GrafCompLic$Monto)
-    
+    #GrafCompLic$Monto <- as.integer(GrafCompLic$Monto
     #customdata <- GrafCompLic$NombreOrganismo
     key <- GrafCompLic$nombre_institucion
     p<- plot_ly(GrafCompLic, 
@@ -824,7 +817,7 @@ server <- function(session,input, output) {
   
   ####Grafico Oferentes por licitación
   output$PlotOferentesLic<- renderPlotly({
-    GrafOferentes <- dataLicAdj9() %>% group_by(., oferentes) %>% mutate(Freq = n()) %>% select(oferentes, Freq) %>% arrange(oferentes) %>% unique()
+    GrafOferentes <- dataLicAdj10() %>% group_by(., oferentes) %>% mutate(Freq = n()) %>% select(oferentes, Freq) %>% arrange(oferentes) %>% unique()
     # barraColor <- GrafOferentes %>% filter( ., oferentes == 1)
     
     key <- GrafOferentes$oferentes
@@ -846,8 +839,6 @@ server <- function(session,input, output) {
 
     ggplotly(p)
   })
-
-  
   
   ##Bar chart con productos con mayor monto adjudicado
   
@@ -882,7 +873,7 @@ server <- function(session,input, output) {
   
   #TABLA Licitaciones adjudicadas
   output$DataTabLic <- renderDT({
-    datatable( asd <- dataLicAdj10() %>% mutate(Enlace = createLinkLic(id_lic)) %>% select(Enlace, everything())
+    datatable( asd <- dataLicAdj10() %>% mutate(Enlace = createLinkLic(id_lic)) %>% select(Enlace, everything(), -ocid)
                ,
                escape = F,
                rownames = F,
@@ -910,7 +901,7 @@ server <- function(session,input, output) {
                  #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
-    )#%>% formatCurrency(c("MontoCLP","MontoUTM"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd2),fontSize = '11px',fontWeight='600')
+    )%>% formatCurrency(c("monto_est","monto_adj","monto_clp"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
   })
   
   
@@ -956,7 +947,7 @@ server <- function(session,input, output) {
                  #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
-    )#%>% formatCurrency(c("MontoCLP","MontoUTM"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd2),fontSize = '11px',fontWeight='600')
+    )%>% formatCurrency(c("costo_u","costo_u_clp"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
   })
   
   
@@ -978,7 +969,7 @@ server <- function(session,input, output) {
   output$DataTabProv <- renderDT({
     if(input$RadioLic == "publicacion"){
     }else{
-    datatable( asd <- drilldataProv() %>% mutate(Enlace = createLinkProv( Mod_Rut2(rut_sucursal))) %>% select(Enlace, everything())
+    datatable( asd <- drilldataProv() %>% mutate(Enlace = createLinkProv(rut_sucursal)) %>% select(Enlace, everything())
                ,
                escape = F,
                rownames = F,
@@ -1007,12 +998,12 @@ server <- function(session,input, output) {
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
     )
-   }    #%>% formatCurrency(c("MontoCLP","MontoUTM"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd2),fontSize = '11px',fontWeight='600')
+   } %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
   })
   
   #TABLA rubros
   output$DataRubros <- renderDT({
-    datatable( DFRubros
+    datatable( asd<-DFRubros
                ,
                escape = F,
                rownames = F,
@@ -1040,7 +1031,7 @@ server <- function(session,input, output) {
                  #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
-    )#%>% formatCurrency(c("MontoCLP","MontoUTM"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd2),fontSize = '11px',fontWeight='600')
+    ) %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
   })
   
   #Observe filtro dinámico de unidad de compra
@@ -1059,6 +1050,48 @@ server <- function(session,input, output) {
   #   
   # })
 
+  ############################################################
+  #Botones de descarga
+  ############################################################
+  
+  #Descarga tabla licitaciones
+  output$DescargarFiltLic <- downloadHandler(
+    filename = function() {
+      paste("DetalleLicFiltrado", "xlsx", sep=".")
+    },
+    content = function(filename) {
+      dataLicAdj10()
+      #write.csv(dataC(),filename, row.names = F, sep= ";")
+      write_xlsx(dataLicAdj10(), path = filename, col_names = TRUE, format_headers = TRUE)
+    }
+  )
+  
+  
+  #Descarga tabla items
+  output$DescargarFiltItem <- downloadHandler(
+    filename = function() {
+      paste("DetalleItemFiltrado", "xlsx", sep=".")
+    },
+    content = function(filename) {
+      drilldataItem()
+      #write.csv(dataC(),filename, row.names = F, sep= ";")
+      write_xlsx(drilldataItem(), path = filename, col_names = TRUE, format_headers = TRUE)
+    }
+  )
+  
+  #Descarga tabla proveedores
+  
+  output$DescargarFiltProv <- downloadHandler(
+    filename = function() {
+      paste("DetalleProvFiltrado", "xlsx", sep=".")
+    },
+    content = function(filename) {
+      drilldataProv()
+      #write.csv(dataC(),filename, row.names = F, sep= ";")
+      write_xlsx(drilldataProv(), path = filename, col_names = TRUE, format_headers = TRUE)
+    }
+  )
+  
   
 }
 

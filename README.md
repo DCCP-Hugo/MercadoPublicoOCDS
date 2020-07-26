@@ -5,6 +5,8 @@
   * [Resumen](#resumen)
   * [Motivación](#motivación)
   * [Instalación](#instalación)
+  * [Agradecimientos](#agradecimientos)
+  * [Benchmarking](#benchmarking)
 
 ## Resumen
 Se desarrolla una aplicación en R, que bajo el ingreso de unos pocos parámetros, descarga automáticamente datos masivos de compras públicas en formato OCDS, los almacena en una base de datos Postgress, y permite la visualización en un panel usando Shiny.
@@ -56,6 +58,14 @@ Recomiendo seguir las indicaciones del siguiente video:
 
 [<img target="_blank" src="https://www.r-project.org/logo/Rlogo.svg" width=100>](https://r-project.org/) [<img target="_blank" src="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg" width=100>](https://postgresql.org/) 
 
+## Benchmarking
+    - [OCDS Kingfisher](https://mindicador.cl)
+	- [USA Spending](https://www.usaspending.gov/)
 
-    
+## Agradecimientos:
+
+	- [Mi Indicador](https://mindicador.cl)
+	- [Open Contracting Partnership](https://www.open-contracting.org/es)
+
+
     

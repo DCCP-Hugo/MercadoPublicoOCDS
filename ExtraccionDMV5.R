@@ -4,9 +4,10 @@
 ## Fecha:27-02-2020
 ## Autor: Hugo Gallardo
 ## Contacto: hugo.gallardo@chilecompra.cl
-## Versión:4.0
+## Versión:5.0
 ################################################## 
 
+#Paquetes usados
 library(tidyr)
 library(dplyr)
 library(DT)
@@ -21,32 +22,39 @@ library(jsonlite)
 library(RPostgreSQL)
 library(stringi)
 library(stringr)
-#library(plotly)
-#library(wordcloud2)
-library(stringr)
-#library(shiny)
-#library(shinydashboard)
 library(writexl)
-#library(sparkline)
-#library(RColorBrewer)
-#library(shinyWidgets)
-#library(sodium)
 
-#Observaciones
+#Consideraciones
+
 #El ID del comprador corresponde a la de unidad de compra
 #El nombre del comprador viene de la forma -> Organismo | Unidad de compra
 #Si existe más de un supplier en una licitación, no hay manera de saber quién se adjudicó cuánto
-#Hay problemas con el encoding por usar windows, por lo que probablemente se pase a encoding win 125
 #Existen licitaciones adjudicadas pero que no poseen adjudicado ni fecha de adjudicación
-#Se requiere de alguna manera generar un flag para las licitacfiones en tender y otras en award
-#Se requiere de una iteración para identificar al comprador y adjudicado en "parties" para poder obtener la región de ambos
 #En caso de una fecha que no exista, se agregará la mínima fecha, la cual es 1980-01-01. Intené usar infinity, pero generaba problemas para cargar a R
 #En caso de proveedores es nombre empresa | nombre sucursal
-#Costos unitarios son netos, es decir, no poseen descuentos, impuestos o fletes
+#Costos unitarios en la gran mayoría son netos, es decir, no poseen descuentos, impuestos o fletes
 #En caso de licitaciones que tengan una etapa "Publicación", el monto es estimado por el comprador.
 #Tener en consideración que hay proveedores que ingresan mal los rubros, o incluso pueden poner nivel 3
 #El estado de licitación "activa" se cambia una vez termine el período de "Award" de una licitación.
 #El cambio de moneda se asocia al mes de la publicación de la licitación
+
+
+################################INPUTS DE USUARIO######################################################################
+
+#Conexión a postgress
+#URL carpeta local en la que se crearán las carpetas a guardar archivos RAR y JSON
+#Fecha inicial y final a extrael en el formato: " ". En caso de querer siempre el último mes, no modificar "AnioFinal"
+
+
+
+
+
+
+
+#USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
 
 ############################################################
 #Funciones
@@ -174,7 +182,8 @@ if(dbExistsTable(con, "licitaciones") == FALSE){
   "estado_lic" character varying,
   "tipo_lic" character varying,
   "etapa_lic" character varying,
-  "monto_lic" numeric,
+  "monto_est" numeric,
+  "monto_adj" numeric,
   "moneda" character varying,
   "oferentes" numeric,
   
@@ -623,31 +632,60 @@ for(j in 1:length(listaFechas)){
   #Extraer listado inicial de todas las licitaciones que se encuentran en BBDD postgres
   TodasLicsPG <- dbGetQuery(con, 'SELECT licitaciones."id_lic" FROM licitaciones')
   
-  #Extraer todas las licitaciones que vienen en un zip de mes
-  ListLicbatch <- ListArchivosDF %>% select( ., Name)
-  ListLicbatch$Name <- gsub('.{5}$', '', ListLicbatch$Name)
-  ListLicbatch$Name <- trimws(ListLicbatch$Name)
-  
-  #Asignar flag a las que coincidan
-  LicsFlag <- inner_join(ListLicbatch,TodasLicsPG, by=c("Name" = "id_lic"))
-  
-  #Formatear a vector
-  
-  LicsFlagVec <-Filtro_Query_texto(LicsFlag$Name)
-  #Eliminando filas de tablas en caso de existir id_lic en BD
-  
-  if(nrow(LicsFlag) != 0){
+  if(nrow(TodasLicsPG)!=0){
+    #Extraer todas las licitaciones que vienen en un zip de mes
+    ListLicbatch <- ListArchivosDF %>% select( ., Name)
+    ListLicbatch$Name <- gsub('.{5}$', '', ListLicbatch$Name)
+    ListLicbatch$Name <- trimws(ListLicbatch$Name)
     
-    #Eliminar de tabla items
-    dbSendQuery(con, paste0('delete from items where items."id_lic" IN (',LicsFlagVec,')'))
-    dbCommit(con)
-    #Eliminar de tabla proveedores
-    dbSendQuery(con, paste0('delete from proveedores where proveedores."id_lic" IN (',LicsFlagVec,')'))
-    dbCommit(con)
-    #Eliminar de tabla licitaciones
-    dbSendQuery(con, paste0('delete from licitaciones where licitaciones."id_lic" IN (',LicsFlagVec,')'))
-    dbCommit(con)
+    #Asignar flag a las que coincidan
+    LicsFlag <- inner_join(ListLicbatch,TodasLicsPG, by=c("Name" = "id_lic"))
     
+    #Formatear a vector
+    
+    LicsFlagVec <-Filtro_Query_texto(LicsFlag$Name)
+    #Eliminando filas de tablas en caso de existir id_lic en BD
+    
+    if(nrow(LicsFlag) != 0){
+      
+      #Eliminar de tabla items
+      dbSendQuery(con, paste0('delete from items where items."id_lic" IN (',LicsFlagVec,')'))
+      dbCommit(con)
+      #Eliminar de tabla proveedores
+      dbSendQuery(con, paste0('delete from proveedores where proveedores."id_lic" IN (',LicsFlagVec,')'))
+      dbCommit(con)
+      #Eliminar de tabla licitaciones
+      dbSendQuery(con, paste0('delete from licitaciones where licitaciones."id_lic" IN (',LicsFlagVec,')'))
+      dbCommit(con)
+      
+    }
+  
+      #Extraer todas las licitaciones que vienen en un zip de mes
+      ListLicbatch <- ListArchivosDF %>% select( ., Name)
+      ListLicbatch$Name <- gsub('.{5}$', '', ListLicbatch$Name)
+      ListLicbatch$Name <- trimws(ListLicbatch$Name)
+      
+      #Asignar flag a las que coincidan
+      LicsFlag <- inner_join(ListLicbatch,TodasLicsPG, by=c("Name" = "id_lic"))
+      
+      #Formatear a vector
+      
+      LicsFlagVec <-Filtro_Query_texto(LicsFlag$Name)
+      #Eliminando filas de tablas en caso de existir id_lic en BD
+      
+      if(nrow(LicsFlag) != 0){
+        
+        #Eliminar de tabla items
+        dbSendQuery(con, paste0('delete from items where items."id_lic" IN (',LicsFlagVec,')'))
+        dbCommit(con)
+        #Eliminar de tabla proveedores
+        dbSendQuery(con, paste0('delete from proveedores where proveedores."id_lic" IN (',LicsFlagVec,')'))
+        dbCommit(con)
+        #Eliminar de tabla licitaciones
+        dbSendQuery(con, paste0('delete from licitaciones where licitaciones."id_lic" IN (',LicsFlagVec,')'))
+        dbCommit(con)
+        
+        }
   }
   #################################################################################################
   #################################################################################################
@@ -659,8 +697,6 @@ for(j in 1:length(listaFechas)){
       
       #Version para iteración  
       #al estar mal construido un Json, genera un error. Se debe manejar este error con un next.
-      
-      
       LicJson <- read_json(paste0(urlJson,'/', ListArchivosDF$Name[k]), simplifyVector = FALSE)
       # LicJson <- read_json(paste0(urlJson,'/', ListArchivosDF$Name[139]), simplifyVector = FALSE)
       
@@ -716,7 +752,8 @@ for(j in 1:length(listaFechas)){
         estado_lic <- EstadoLicTrad(LicJson$records[[1]]$compiledRelease$awards[[1]]$status)
         tipo_lic <- LicJson$records[[1]]$compiledRelease$tender$procurementMethodDetails
         etapa_lic <- "adjudicacion"
-        monto_lic <-TransNullNAN(LicJson$records[[1]]$compiledRelease$awards[[1]]$value$amount) 
+        monto_est <-TransNullNAN(LicJson$records[[1]]$compiledRelease$tender$value$amount)
+        monto_adj <-TransNullNAN(LicJson$records[[1]]$compiledRelease$awards[[1]]$value$amount) 
         moneda <- TransNullNA(LicJson$records[[1]]$compiledRelease$awards[[1]]$value$currency)
         #Se le resta 1 porque el primer party es el comprador
         oferentes <- TransNullNAN((as.integer(length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]])) - 1))
@@ -725,8 +762,8 @@ for(j in 1:length(listaFechas)){
                             desc_lic = desc_lic, nombre_institucion = nombre_institucion, 
                             nombre_uncompra = nombre_uncompra, id_uncompra = id_uncompra, region_uncompra =region_uncompra,
                             fecha_apertura = fecha_apertura, fecha_cierre = fecha_cierre, fecha_adj = fecha_adj,
-                            estado_lic = estado_lic , tipo_lic = tipo_lic, etapa_lic = etapa_lic,
-                            monto_lic = monto_lic, moneda = moneda, oferentes = oferentes)
+                            estado_lic = estado_lic , tipo_lic = tipo_lic, etapa_lic = etapa_lic, monto_est =monto_est,
+                            monto_adj = monto_adj, moneda = moneda, oferentes = oferentes)
         
       } else{
         
@@ -745,7 +782,8 @@ for(j in 1:length(listaFechas)){
         estado_lic <- EstadoLicTrad(LicJson$records[[1]]$compiledRelease$tender$status)
         tipo_lic <- LicJson$records[[1]]$compiledRelease$tender$procurementMethodDetails
         etapa_lic <- "publicacion"
-        monto_lic <-TransNullNAN(LicJson$records[[1]]$compiledRelease$tender$value$amount) 
+        monto_est <-TransNullNAN(LicJson$records[[1]]$compiledRelease$tender$value$amount)
+        monto_adj <- NaN
         moneda <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$value$currency)  
         #Se le resta 1 porque el primer party es el comprador
         oferentes <- TransNullNAN((as.integer(length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]])) - 1))
@@ -754,8 +792,8 @@ for(j in 1:length(listaFechas)){
                             desc_lic = desc_lic, nombre_institucion = nombre_institucion, 
                             nombre_uncompra = nombre_uncompra, id_uncompra = id_uncompra,region_uncompra = region_uncompra,
                             fecha_apertura = fecha_apertura, fecha_cierre = fecha_cierre, fecha_adj = fecha_adj,
-                            estado_lic = estado_lic , tipo_lic = tipo_lic, etapa_lic = etapa_lic,
-                            monto_lic = monto_lic, moneda = moneda,  oferentes = oferentes)
+                            estado_lic = estado_lic , tipo_lic = tipo_lic, etapa_lic = etapa_lic,monto_est=monto_est,
+                            monto_adj = monto_adj,  moneda = moneda,  oferentes = oferentes)
       }
       
       #
@@ -801,10 +839,7 @@ for(j in 1:length(listaFechas)){
         DFProv <- rename(DFProv,id_lic = V1,id_sucursal = V2, rut_sucursal=V3, nombre_empresa=V4, 
                          nombre_sucursal=V5 , nombrelegal_sucursal= V6 ,pais_sucursal =V7,region_sucursal=V8 )
         
-        
       }
-      
-      
       ############################################################
       #DF nivel producto en licitaciones adjudicadas
       ############################################################
@@ -877,10 +912,6 @@ for(j in 1:length(listaFechas)){
         
       }
       
-      
-      
-      
-      
       #Agregar datos a tabla licitaciones
       if(nrow(DFLic) != 0){
         dbWriteTable(con, 'licitaciones', DFLic,row.names=FALSE,append=TRUE)
@@ -915,6 +946,11 @@ for(j in 1:length(listaFechas)){
   zipRemove <-do.call(file.remove, list(list.files(urlZipFile, full.names = TRUE)))
   
 } #Fin loop archivo
+
+
+
+
+
 
 #Generar iterador por mes y año
 #Se debe tener en consideración una fecha inicio y una final, y encontrar la forma de llenar mensualmente las fechas entre medio.
