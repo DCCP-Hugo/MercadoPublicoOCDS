@@ -1,0 +1,47 @@
+﻿Tabla;Columna;Descripción;Consideraciones
+licitaciones;ocid;ID único que sigue lógica de OCDS;
+licitaciones;id_lic;ID licitación generada por mercado público;
+licitaciones;nombre_lic;nombre de la licitación;
+licitaciones;desc_lic;descripción de la licitación;
+licitaciones;nombre_institucion;nombre de la institución compradora;
+licitaciones;nombre_uncompra;nombre de la unidad de compra compradora;
+licitaciones;id_uncompra;ID único de unidad de compra;
+licitaciones;region_uncompra;Región ingresada por la unidad de compra;
+licitaciones;fecha_apertura;Fecha de apertura de ofertas de una licitación;Se utiliza como NULL el año 1980, dado que Postgress no admite NULLs en formato fecha.
+licitaciones;fecha_cierre;fecha de cierre de ofertas de una licitación;Se utiliza como NULL el año 1980, dado que Postgress no admite NULLs en formato fecha.
+licitaciones;fecha_adj;fecha en que la licitación se declara adjudicada;Se utiliza como NULL el año 1980, dado que Postgress no admite NULLs en formato fecha.
+licitaciones;estado_lic;estado de la licitación;Los estados pueden ser: 1)Activo, que sigue el curso normal de una licitación. 2) Suspendida, en la que la licitación se termina por alguna condición del comprador. 3) Revocada, en la que la licitación no se continúa por alguna falta del proveedor en el contrato. 4) Desierta, en la que la licitación se termina por no tener oferentes que se ajusten a los requerimientos.
+licitaciones;tipo_lic;tipo de licitación;
+licitaciones;etapa_lic;etapa de licitación según OCDS. ;Las etapas son 2:  1)Publicación: Es el estado inicial de una licitación, que inicia desde que se publica una licitación, hasta que se adjudica. No está determinado por la fecha de cierre. 2)Adjudicación: Una vez la licitación termina su etapa de evaluación y llega a un estado final.
+licitaciones;monto_est;monto estimado de la licitación por el comprador;
+licitaciones;monto_adj;monto adjudicado de la licitación;
+licitaciones;moneda;moneda del monto publicado y adjudicado;
+licitaciones;oferentes;número de oferentes de la licitación;
+proveedores;id_lic;ID licitación generada por mercado público;
+proveedores;id_sucursal;ID de la sucursal del proveedor;
+proveedores;rut_sucursal;Rut de la sucursal del proveedor;Viene sin puntos ni guión, para mantener consistencia con la fuente, pero dentro del código de R existe una función para corregirlo.
+proveedores;nombre_ empresa;nombre de la empresa;
+proveedores;nombre_sucursal;nombre de la sucursal del proveedor;
+proveedores;nombrelegal_sucursal;nombre legal de la sucursal declarado por el proveedor;
+proveedores;pais_sucursal;pais de la sucursal declarada por el proveedor;
+proveedores;region_sucursal;region de la sucursal del proveedor;
+items;id_lic;ID licitación generada por mercado público;
+items;id_item;ID del ítem transado;
+items;sucur;nombre del ímte transado;
+items;cantidad;cantidad transada del ítem;
+items;unidad;unidad de medida del ítem;
+items;costo_u;costo unitario del ítem;Por lo general son costos netos, es decir, no poseen impuestos ni descuentos por fletes.
+items;moneda;moneda del costo unitario del ítem;
+items;idproducto_onu;ID de producto basado en la categorización UNCCS;
+rubros;idproducto_onu;ID de producto basado en la categorización UNCCS;
+rubros;nombreproducto_onu;Nombre de producto basado en la categorización UNCCS;
+rubros;id_nivel3;ID nivel 3 de producto basado en la categorización UNCCS .Se puede considerar también como categoría producto);
+rubros;nombre_nivel3;Nombre nivel 3 de producto basado en la categorización UNCCS .Se puede considerar también como categoría producto);
+rubros;nombre_nivel2;Nombre nivel 2 de producto basado en la categorización UNCCS .Se puede considerar también como categoría producto);
+rubros;nombre_nivel1;Nombre nivel 1 de producto basado en la categorización UNCCS .Se puede considerar también como categoría producto);
+cambio_moneda;moneda;ID del tipo de moneda;
+cambio_moneda;cambioclp;Tipo de cambio mensual desde el ID tipo moneda a CLP;
+cambio_moneda;fecha;fecha en la que se registra el tipo de cambio;
+cambio_moneda;anio;año del tipo de cambio;
+cambio_moneda;mes;mes del tipo de cambio;
+cambio_moneda;dia;dia del tipo de cambio;

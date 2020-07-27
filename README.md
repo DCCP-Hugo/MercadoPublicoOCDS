@@ -18,7 +18,7 @@ A su vez, existen esfuerzos tanto de organizaciones no gubernamentales (ONG) tal
 
 En esta línea, OCP genera un estándar de modelo de datos a nivel global, que permite generar análisis comparativos de compras públicas en todos los países que lo posean, independiente de la estructura de datos, procesos de compra o nomenclatura de sus datos. La tecnología base recomendada para esto, es a través de archivos JSON, cuya conexión con el usuario es usualmente a través de APIs, por la gran cantidad de datos. 
 
-En favor de lo anterior, [ChileCompra](https://www.chilecompra.cl/) adopta los lineamientos de datos abiertos implementando una API con estándar de datos OCDS (Open Contracting Data Standard) propuesto por OCP, que permite a cualquier usuario descargar datos de compras públicas tanto en tiempo real, como a través de descargas masivas de datos, teniendo todas las ventajas que el estándar conlleva.
+En favor de lo anterior, [ChileCompra](https://www.chilecompra.cl/) adopta los lineamientos de datos abiertos implementando una [API](https://desarrolladores.mercadopublico.cl/) con estándar de datos [OCDS](https://standard.open-contracting.org/latest/es/) (Open Contracting Data Standard) propuesto por OCP, que permite a cualquier usuario descargar datos de compras públicas tanto en tiempo real, como a través de descargas masivas de datos, teniendo todas las ventajas que el estándar conlleva.
 
 El problema de los datos provenientes de esta API en particular es la gran barrera de entrada en conocimientos tecnológicos que presenta para los usuarios: El entendimiento del negocio de compras públicas, manipulación de listas anidadas en formato JSON, manejo de softwares especializados en datos, el idioma inglés y la manipulación de archivos pesados (1,3 gigabytes app por archivo mensual.) 
 
@@ -37,12 +37,12 @@ Recomiendo seguir las indicaciones de este video:
 2. Instalación de Postgress
 Recomiendo seguir las indicaciones del siguiente video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=cHGaDfzJyY4)
+    - Versión utilizada: 10.10-1
     - Muy importante recordar la constraseña y puerto ingresado.
     - La instalación estándar es suficiente.
 	- Recomendable: Crear una base de datos llamada "OCDS" usando pgAdmin. Recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI) .
 
 3. Configuración de aplicativo:
-
     - Clonar o descargar este repositorio en su computador
 	- Ejecutar el archivo: __InstalarPackages.R__
 	- Abrir el archivo xxxx y modificar los campos requeridos de conexión a postgress, carpetas locales y rango de fecha a actualizar.
@@ -52,11 +52,12 @@ Recomiendo seguir las indicaciones del siguiente video:
 1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.
 2. Ejecutar el archivo  __ExtraccionDMV5.R__.
       - Con una muy buena conexión a internet, toma aproximadamente 15 minutos cargar 1 mes de datos.
-	  - Una vez terminada la ejecución de __ExtraccionDMV5.R__ , es posible realizar consultas en la base de datos PostgreSQL. 
-	  - Para configurar la extracción con task manager, leer el archivo: 
+	  - Una vez terminada la ejecución de __ExtraccionDMV5.R__ , es posible realizar consultas en la base de datos PostgreSQL.
+	  - Se recomienda encarecidamente revisar la [metadata](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Metadata.csv).
+		
 
 ## Modelo de datos
-[<img target="_blank" src="https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png" width=100>](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png)
+[<img target="_blank" src="https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png" width=300>](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png)
 
 
 ## Utilización de visualización shiny
