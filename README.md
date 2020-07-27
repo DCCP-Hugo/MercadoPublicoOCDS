@@ -37,16 +37,16 @@ Recomiendo seguir las indicaciones de este video:
 2. Instalación de Postgress
 Recomiendo seguir las indicaciones del siguiente video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=cHGaDfzJyY4)
-    - Versión utilizada: 10.10-1
+    - Versión utilizada: 10.10-1 .
     - Muy importante recordar la constraseña y puerto ingresado.
     - La instalación estándar es suficiente.
 	- Recomendable: Crear una base de datos llamada "OCDS" usando pgAdmin. Recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI) .
 
 3. Configuración de aplicativo:
-    - Clonar o descargar este repositorio en su computador
+    - Clonar o descargar este repositorio en su computador.
 	- Ejecutar el archivo: __InstalarPackages.R__
 	- Abrir el archivo xxxx y modificar los campos requeridos de conexión a postgress, carpetas locales y rango de fecha a actualizar.
-	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo
+	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo.
 	
 ## Utilización de carga de datos
 1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.
@@ -57,16 +57,16 @@ Recomiendo seguir las indicaciones del siguiente video:
 		
 
 ## Modelo de datos
-[<img target="_blank" src="https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png" width=300>](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png)
+[<img target="_blank" src="https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png" width=400>](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png)
 
 
 ## Utilización de visualización shiny
 1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.	  
-	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo
-	- Ejecutar visualización
-	- Cliquear en la pequeña tuerca azul cercana a la esquina superior izquierda
-	- Seleccionar el rango de fechas a visualizar y si se desea ver licitaciones adjudicadas o publicadas
-	- Cliquear en "Ingreso Fechas Precarga"
+	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo.
+	- Ejecutar visualización.
+	- Cliquear en la pequeña tuerca azul cercana a la esquina superior izquierda.
+	- Seleccionar el rango de fechas a visualizar y si se desea ver licitaciones adjudicadas o publicadas.
+	- Cliquear en "Ingreso Fechas Precarga".
 	- Modificar filtros deseados y cliquear en el botón "Consultar".
 	- Es posible filtrar con los gráficos de burbuja.
 

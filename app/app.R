@@ -25,13 +25,11 @@ library(shinydashboard)
 library(writexl)
 library(shinyWidgets)
 library(plotly)
-# shinycssloaders
+
 
 
 ################################INPUTS DE USUARIO######################################################################
 
-# create a connection
-# save the password that we can "hide" it as best as we can by collapsing it
 pw <- {
   "dccp"
 }
@@ -281,34 +279,12 @@ ui <- dashboardPage(
                             
                             actionBttn(inputId="BotonFiltLic", label = "Consultar", icon = NULL, style = "float",color = "success",size="xs"),
                             
-                            # pickerInput(inputId="RegFilterLic",label="Región (Unidad de Compra)",choices = ListRegionComp, selected = "Todo",
-                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                            #                          `deselect-all-text` = "Quitar Todo",
-                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            # ),
-                            
+
                             selectizeInput( inputId="RegFilterLic", label = "Región (Unidad de Compra)", choices=ListRegionComp,  multiple=TRUE),
                             
-                            # pickerInput(inputId="InstFilterLic",label="Institución",choices = ListOrgLic, selected = "Todo",
-                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                            #                          `deselect-all-text` = "Quitar Todo",
-                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            # ),
-                            
+
                             selectizeInput( inputId="InstFilterLic", label = "Institución", choices=ListOrgLic,  multiple=TRUE),
                             
-                            
-                            # pickerInput(inputId="UcompFilterLic",label="Unidad de compra",choices = ListUnCompraLic, selected = "Todo",
-                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                            #                          `deselect-all-text` = "Quitar Todo",
-                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            # ),
                             
                             selectizeInput( inputId="UcompFilterLic", label = "Unidad de compra", choices=ListUnCompraLic,  multiple=TRUE),
                             
@@ -327,18 +303,6 @@ ui <- dashboardPage(
                                                      `select-all-text` = "Seleccionar Todo"),multiple=TRUE
                             ),
                             
-                            # pickerInput(inputId="SucursalFilterLic",label="Empresa",choices = ListEmprLic, selected = "Todo",
-                            #             options=pickerOptions(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                                   showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                                   selectedTextFormat="count",style="btn-primary"),multiple=TRUE
-                            # ),
-                            
-                            # pickerInput(inputId="EmpresaFilterLic",label="Empresa",choices = ListSucLic, selected = "Todo",
-                            #             options=pickerOptions(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                                   showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                                   selectedTextFormat="count",style="btn-primary"),multiple=TRUE
-                            # ),
-                            #
                             
                             selectizeInput( inputId="EmpresaFilterLic", label = "Empresa", choices=ListEmprLic,  multiple=TRUE),
                             
@@ -348,34 +312,11 @@ ui <- dashboardPage(
                               value = c(0, MaxMonto), separator = "hasta"
                             ),
                             
-                            # pickerInput(inputId="CatProdFilterLic",label="Categoria",choices = ListCatRub, selected = "Todo",
-                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                            #                          `deselect-all-text` = "Quitar Todo",
-                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            # ),
-                            
                             
                             selectizeInput( inputId="CatProdFilterLic", label = "Categoria", choices=ListCatRub,  multiple=TRUE),
                             
-                            # pickerInput(inputId="ProdOnuFilterLic",label="Productos",choices = ListProdOnu, selected = "Todo",
-                            #             options=list(liveSearch=TRUE, liveSearchStyle="contains",
-                            #                          showTick=TRUE,size=4,noneSelectedText="Elija opción",
-                            #                          selectedTextFormat="count",style="btn-primary",`actions-box` = TRUE,
-                            #                          `deselect-all-text` = "Quitar Todo",
-                            #                          `select-all-text` = "Seleccionar Todo"),multiple=TRUE
-                            # )
-                            
+
                             selectizeInput( inputId="ProdOnuFilterLic", label = "Productos", choices=ListProdOnu,  multiple=TRUE)
-                            
-                            
-                            # ,
-                            # 
-                            # 
-                            # radioButtons("FiltrosLic","Banderas Rojas:", choices = list("Todo" = "Todo" , "Preguntas" = "Preguntas", "Reclamos" = "Reclamos", "Fecha_Horario"="Fecha_Horario",
-                            #                                                             "No competencia" = "No competencia"), selected ="Todo", inline=TRUE
-                            # )
                             
                           )
             )
@@ -388,16 +329,14 @@ ui <- dashboardPage(
            #box(plotlyOutput("PlotEstadoLic", width = '100%')),
            box(plotlyOutput("PlotItemsLic", width = '100%')),
            box(plotlyOutput("PlotOferentesLic", width = '100%')),
-           # box(wordcloud2Output("PlotWordLic", width = '100%')),
            box((DTOutput("DataTabLic")),width = 12, title = span(strong("Detalle de Licitaciones"),
                                                                 style = "color: black; text-align:center")),
            box((DTOutput("DataTabItem")),width = 12, title = span(strong("Detalle de Items"),
                                                                 style = "color: black; text-align:center")),
            box((DTOutput("DataTabProv")),width = 8, title = span(strong("Detalle de Proveedores"),
                                                                  style = "color: black; text-align:center")),
-          #,
+          
            fluidRow(div(style = "height:15px")),
-          # downloadButton("DescargarTodoLic","Descargar Tabla Completa" , class = "test1"),
            tags$head(tags$style(".test1{background-color:black;} .test1{color: white;} ")),
            downloadButton("DescargarFiltLic","Descargar Licitaciones", class = "test1" ),
            downloadButton("DescargarFiltItem","Descargar Ítems", class = "test1"),
@@ -728,8 +667,7 @@ server <- function(session,input, output) {
     GrafCompLic <- inner_join(GrafCompLic1,GrafCompLic2, by="nombre_institucion") %>% arrange(desc(Monto,Cantidad)) 
     GrafCompLic <- GrafCompLic %>% filter(., !is.na(Monto))
     GrafCompLic <- head(GrafCompLic,30)
-    #GrafCompLic$Monto <- as.integer(GrafCompLic$Monto
-    #customdata <- GrafCompLic$NombreOrganismo
+
     key <- GrafCompLic$nombre_institucion
     p<- plot_ly(GrafCompLic, 
                 x = ~Cantidad, 
@@ -792,37 +730,7 @@ server <- function(session,input, output) {
     }
     })
     
-  
 
-  #   
-  #   
-  
-  ####Grafico Estados licitaciones
-  # output$PlotEstadoLic<- renderPlotly({
-  #   GrafEstadoLic1 <- dataLicAdj9() %>% group_by(nombre_institucion, estado_lic) %>% summarise(., CantidadN = n()) 
-  #   GrafEstadoLic2 <- GrafEstadoLic1 %>% group_by(estado_lic) %>% summarise(.,Cantidad = sum(CantidadN))
-  #   GrafEstadoLic3 <- GrafEstadoLic1 %>% group_by(estado_lic) %>% summarise(.,Cantidad = sum(CantidadN)) %>% summarize(Total = sum(Cantidad))
-  #   GrafEstadoLic2 <- GrafEstadoLic2 %>% mutate( ., Total =GrafEstadoLic3$Total[1]) %>% mutate(., Porcentaje= as.integer((Cantidad/Total)*100))
-  #   key <- GrafEstadoLic2$estado_lic
-  #   
-  #   p <- plot_ly(GrafEstadoLic2,
-  #                x = ~estado_lic,
-  #                y = ~Cantidad,
-  #                color = ~estado_lic, colors = 'Paired',
-  #                name = "Licitaciones por estado",
-  #                type = "bar",
-  #                hoverinfo = 'text',
-  #                key = ~key,
-  #                source = "PlotEstadoLic",
-  #                text = ~paste0('<b>Estado: </b>', estado_lic, '<br><b>Cantidad: </b>', comma3(Cantidad), '<br><b>Porcentaje: </b>',comma3(Porcentaje),"%")) %>%
-  #     layout(title = '<b>Frecuencia de Estados de Licitaciones</b>',
-  #            #xaxis = list(showgrid = FALSE),
-  #            yaxis = list(showgrid = FALSE),
-  #            showlegend = FALSE)
-  #   
-  #   ggplotly(p)
-  # })
-  
   ####Grafico Oferentes por licitación
   output$PlotOferentesLic<- renderPlotly({
     GrafOferentes <- dataLicAdj10() %>% group_by(., oferentes) %>% mutate(Freq = n()) %>% select(oferentes, Freq) %>% arrange(oferentes) %>% unique()
@@ -851,7 +759,8 @@ server <- function(session,input, output) {
   ##Bar chart con productos con mayor monto adjudicado
   
   output$PlotItemsLic<- renderPlotly({
-    
+    if(input$RadioLic == "publicacion"){
+    }else{
     ProdItemBar <- semi_join(dataLicItem(), dataLicAdj10(), by="id_lic"  )
     ProdItemBar <- ProdItemBar %>% group_by(idproducto_onu, nombreproducto_onu) %>% summarise(MontoProd = sum(costo_u_clp* cantidad)) %>%
          arrange(desc(MontoProd)) %>% head(10)
@@ -876,7 +785,7 @@ server <- function(session,input, output) {
              showlegend = FALSE)
     
     ggplotly(p)
-    
+    }
   })
   
   #TABLA Licitaciones adjudicadas
@@ -902,11 +811,6 @@ server <- function(session,input, output) {
                  #paging=FALSE,
                  scrollCollapse=TRUE,
                  keys=TRUE,
-                 # dom = 'Bfrtip', 
-                 # buttons = I('colvis'),
-                 #processing=FALSE,
-                 #columnDefs = list(list(visible=FALSE, targets=c(3,6,12,13))),
-                 #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
     )%>% formatCurrency(c("monto_est","monto_adj","monto_clp"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
@@ -948,11 +852,7 @@ server <- function(session,input, output) {
                  #paging=FALSE,
                  scrollCollapse=TRUE,
                  keys=TRUE,
-                 # dom = 'Bfrtip', 
-                 # buttons = I('colvis'),
-                 #processing=FALSE,
-                 #columnDefs = list(list(visible=FALSE, targets=c(3,6,12,13))),
-                 #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
+
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
     )%>% formatCurrency(c("costo_u","costo_u_clp"),currency = "",digits = 0, interval = 3, mark = ".") %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
@@ -998,11 +898,6 @@ server <- function(session,input, output) {
                  #paging=FALSE,
                  scrollCollapse=TRUE,
                  keys=TRUE,
-                 # dom = 'Bfrtip', 
-                 # buttons = I('colvis'),
-                 #processing=FALSE,
-                 #columnDefs = list(list(visible=FALSE, targets=c(3,6,12,13))),
-                 #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
     )
@@ -1032,31 +927,11 @@ server <- function(session,input, output) {
                  #paging=FALSE,
                  scrollCollapse=TRUE,
                  keys=TRUE,
-                 # dom = 'Bfrtip', 
-                 # buttons = I('colvis'),
-                 #processing=FALSE,
-                 #columnDefs = list(list(visible=FALSE, targets=c(3,6,12,13))),
-                 #tableTools=list(sSwfPath = copySWF('www'),aButtons=c('copy','csv','print')),
                  fnDrawCallback = htmlwidgets::JS('function(){HTMLWidgets.staticRender();}')
                )
     ) %>% formatStyle(names(asd),fontSize = '11px',fontWeight='600')
   })
   
-  #Observe filtro dinámico de unidad de compra
-  # observe({
-  #   if(!is.null(input$InstFilterLic)){
-  #     FInstLic <- DetalleLic %>% filter(Institucion == input$InstFilterLic) %>% select(.,UnCompra) %>% arrange(.,UnCompra) %>%unique()
-  #     updateSelectInput(session,"UcompFilterLic", choices = c("Todo",FInstLic,selected = "Todo"))
-  #   }else{
-  #     updateSelectInput(session,"UcompFilterLic", choices ="Todo",selected = "Todo") 
-  #   }
-  # })
-  
-  #Cerrar todas las conexiones de postgress una vez termine de usarse la app
-  # session$onSessionEnded(function(){
-  #   lapply(dbListConnections(drv = dbDriver("PostgreSQL")), function(x) {dbDisconnect(conn = x)})
-  #   
-  # })
 
   ############################################################
   #Botones de descarga

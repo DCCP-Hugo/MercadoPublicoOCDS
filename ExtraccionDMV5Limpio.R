@@ -58,6 +58,7 @@ urlJson <- 'C:/Users/esteban.olivares/Documents/visualizaciones/Panel SatRday/Js
 #Fecha inicial y final a extrar el en el formato: " ". En caso de querer siempre el último mes, no modificar "AnioFinal"
 #Ingresar fecha inicial y final en formato yyyy-mm-01 (Dado que la carga es por mes, el día no se modifica). 
 #La aplicación agregara a la base de datos todos los meses entre fechaInicial y fechaFinal.
+#Obs la fecha inicial de los datos en OCDS es el año 2009
 
 fechaInicial <- as.Date('2020-01-01')
 
@@ -69,7 +70,6 @@ fechaFinal <- as.Date('2020-07-01')
 ########################################################################################################################
 ########################################################################################################################
 ########################################################################################################################
-
 
 ############################################################
 #Funciones
@@ -528,8 +528,6 @@ for(p in 1: nrow(DFMonedaAnioMes)){
     DFMonedaAnioMes$moneda[p] <- 'EUR'
   }
 }
-
-
 
 if(nFilaMoneda$count ==0){
   dbWriteTable(con, 'cambio_moneda', DFMonedaAnioMes,row.names=FALSE,append=TRUE)
