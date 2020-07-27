@@ -7,7 +7,6 @@
 ## Versión: 1.0
 ##################################################  
 
-
 #Paquetes utilizados
 library(dplyr)
 library(DT)
@@ -29,9 +28,34 @@ library(plotly)
 # shinycssloaders
 
 
-#Observaciones
-#El panel filtra por licitaciones, de ésta se desprenden los proveedores y los ítems
-#
+################################INPUTS DE USUARIO######################################################################
+
+# create a connection
+# save the password that we can "hide" it as best as we can by collapsing it
+pw <- {
+  "dccp"
+}
+# loads the PostgreSQL driver
+drv <- dbDriver("PostgreSQL")
+
+con <- dbConnect(drv, dbname = "OCDS",
+                 host = "localhost", port = 5432,
+                 user = "postgres", password = pw
+                 
+)
+rm(pw) # remueve el pasword para que no aparezca en el cuadro de variables
+
+
+#Se intentará corregir el siguiente problema en el futuro:
+#En caso de que aparezca un error Cannot allocate a new connection: 16 connections already opened, ejecutar el siguiente código:
+#Cerrar todas las conexiones de postgress
+# lapply(dbListConnections(drv = dbDriver("PostgreSQL")), function(x) {dbDisconnect(conn = x)})
+
+
+#USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
 
 
 ############################################################
@@ -46,22 +70,6 @@ library(plotly)
 #2) Setear el nombre de la base de datos. Por defecto es postgres, pero manualmente creé una llamada OCDS.
 ##Intentaré generar esta creación con create database
 #3) 
-
-# create a connection
-# save the password that we can "hide" it as best as we can by collapsing it
-pw <- {
-  "dccp"
-}
-# loads the PostgreSQL driver
-drv <- dbDriver("PostgreSQL")
-# creates a connection to the postgres database
-# note that "con" will be used later in each connection to the database
-con <- dbConnect(drv, dbname = "OCDS",
-                 host = "localhost", port = 5432,
-                 user = "postgres", password = pw
-
-                 )
-rm(pw) # removes the password
 
 
 #Cerrar todas las conexiones de postgress
