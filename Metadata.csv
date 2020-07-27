@@ -7,19 +7,19 @@ licitaciones;nombre_institucion;nombre de la institución compradora;NA
 licitaciones;nombre_uncompra;nombre de la unidad de compra compradora;NA
 licitaciones;id_uncompra;ID único de unidad de compra;NA
 licitaciones;region_uncompra;Región ingresada por la unidad de compra;NA
-licitaciones;fecha_apertura;Fecha de apertura de ofertas de una licitación;Se utiliza como NULL el año 1980, dado que Postgress no admite NULLs en formato fecha.
+licitaciones;fecha_apertura;Fecha de apertura de ofertas de una licitación;Se utiliza como NULL el año 1980 dado que Postgress no admite NULLs en formato fecha.
 licitaciones;fecha_cierre;fecha de cierre de ofertas de una licitación;Se utiliza como NULL el año 1980, dado que Postgress no admite NULLs en formato fecha.
 licitaciones;fecha_adj;fecha en que la licitación se declara adjudicada;Se utiliza como NULL el año 1980, dado que Postgress no admite NULLs en formato fecha.
-licitaciones;estado_lic;estado de la licitación;Los estados pueden ser: 1)Activo, que sigue el curso normal de una licitación. 2) Suspendida, en la que la licitación se termina por alguna condición del comprador. 3) Revocada, en la que la licitación no se continúa por alguna falta del proveedor en el contrato. 4) Desierta, en la que la licitación se termina por no tener oferentes que se ajusten a los requerimientos.
+licitaciones;estado_lic;estado de la licitación;Los estados pueden ser: 1)Activo, que sigue el curso normal de una licitación. 2) Suspendida: en la que la licitación se termina por alguna condición del comprador. 3) Revocada, en la que la licitación no se continúa por alguna falta del proveedor en el contrato. 4) Desierta, en la que la licitación se termina por no tener oferentes que se ajusten a los requerimientos.
 licitaciones;tipo_lic;tipo de licitación;NA
-licitaciones;etapa_lic;etapa de licitación según OCDS. ;Las etapas son 2:  1)Publicación: Es el estado inicial de una licitación, que inicia desde que se publica una licitación, hasta que se adjudica. No está determinado por la fecha de cierre. 2)Adjudicación: Una vez la licitación termina su etapa de evaluación y llega a un estado final.
+licitaciones;etapa_lic;etapa de licitación según OCDS. ;Las etapas son 2:  1)Publicación: Es el estado inicial de una licitación que inicia desde que se publica una licitación hasta que se adjudica. No está determinado por la fecha de cierre. 2)Adjudicación: Una vez la licitación termina su etapa de evaluación y llega a un estado final.
 licitaciones;monto_est;monto estimado de la licitación por el comprador;NA
 licitaciones;monto_adj;monto adjudicado de la licitación;NA
 licitaciones;moneda;moneda del monto publicado y adjudicado;NA
 licitaciones;oferentes;número de oferentes de la licitación;NA
 proveedores;id_lic;ID licitación generada por mercado público;NA
 proveedores;id_sucursal;ID de la sucursal del proveedor;NA
-proveedores;rut_sucursal;Rut de la sucursal del proveedor;Viene sin puntos ni guión, para mantener consistencia con la fuente, pero dentro del código de R existe una función para corregirlo.
+proveedores;rut_sucursal;Rut de la sucursal del proveedor;Viene sin puntos ni guión, para mantener consistencia con la fuente pero dentro del código de R existe una función para corregirlo.
 proveedores;nombre_ empresa;nombre de la empresa;NA
 proveedores;nombre_sucursal;nombre de la sucursal del proveedor;NA
 proveedores;nombrelegal_sucursal;nombre legal de la sucursal declarado por el proveedor;NA
