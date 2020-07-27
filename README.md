@@ -39,27 +39,38 @@ Recomiendo seguir las indicaciones del siguiente video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=cHGaDfzJyY4)
     - Muy importante recordar la constraseña y puerto ingresado.
     - La instalación estándar es suficiente
+	- Recomendable: Crear una base de datos llamada "OCDS" usando pgAdmin. Recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI)
 
 3. Configuración de aplicativo:
 
     - Clonar o descargar este repositorio en su computador
 	- Ejecutar el archivo: __InstalarPackages.R__
-	- Agregar en la aplicación la dirección de las carpetas asociadas
-	- Agregar en la aplicación los datos de la conexión a PostgreSQL
+	- Abrir el archivo xxxx y modificar los campos requeridos de conexión a postgress, carpetas locales y rango de fecha a actualizar.
+	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo
 	
-## Utilización
-1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer
+## Utilización de carga de datos
+1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.
 2. Ejecutar el archivo  __ExtraccionDMV5.R__.
       - Con una muy buena conexión a internet, toma aproximadamente 15 minutos cargar 1 mes de datos.
-	  - Para configurar R con task manager, leer el archivo:
-	  -  
-	  
+	  - Una vez terminada la ejecución de __ExtraccionDMV5.R__ , es posible realizar consultas en la base de datos PostgreSQL. 
+	  - Para configurar la extracción con task manager, leer el archivo: 
+
+## Utilización de visualización shiny
+1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.	  
+	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo
+	- Ejecutar visualización
+	- Cliquear en la pequeña tuerca azul cercana a la esquina superior izquierda
+	- Seleccionar el rango de fechas a visualizar y si se desea ver licitaciones adjudicadas o publicadas
+	- Cliquear en "Ingreso Fechas Precarga"
+	- Modificar filtros deseados y cliquear en el botón "Consultar".
+	- Es posible filtrar con los gráficos de burbuja.
+
 ## Tecnologías utilizadas
 
 [<img target="_blank" src="https://www.r-project.org/logo/Rlogo.svg" width=100>](https://r-project.org/) [<img target="_blank" src="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg" width=100>](https://postgresql.org/) 
 
 ## Benchmarking
-    - [OCDS Kingfisher](https://mindicador.cl)
+    - Link hacia la aplicación Kingfisherde OCDS: [OCDS Kingfisher](https://mindicador.cl)
 	- [USA Spending](https://www.usaspending.gov/)
 
 ## Agradecimientos:
