@@ -55,6 +55,10 @@ Recomiendo seguir las indicaciones del siguiente video:
 	  - Una vez terminada la ejecución de __ExtraccionDMV5.R__ , es posible realizar consultas en la base de datos PostgreSQL. 
 	  - Para configurar la extracción con task manager, leer el archivo: 
 
+## Modelo de datos
+[<img target="_blank" src="https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png" width=100>](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/Modelo%20datos.png)
+
+
 ## Utilización de visualización shiny
 1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.	  
 	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo
