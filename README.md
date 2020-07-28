@@ -31,9 +31,10 @@ La instalación se divide en distintas etapas:
 1. Instalación de R y Rstudio. 
 Recomiendo seguir las indicaciones de este video:
 [Video explicativo de instalación](https://www.youtube.com/watch?v=rxsE3Uc_bnU)
-	- Link de descarga R: 
-    - La versión utilizada para R es la 3.5.2 .
-    - Recomiendo la última versión de RStudio.
+	- Link de descarga R: [Link](https://www.r-project.org/)
+	- Link de descarga RStudio: [Link](https://rstudio.com/products/rstudio/download/#download)
+    - La versión utilizada para R base es la 3.5.2 .
+    - La versión utilizada para RStudio es la 1.1.463
 
 2. Instalación y configuración de Postgress
 Recomiendo seguir las indicaciones del siguiente video:
@@ -41,8 +42,8 @@ Recomiendo seguir las indicaciones del siguiente video:
     - Link de descarga: [Link](https://www.postgresql.org/download/)
     - Versión utilizada: 10.10-1 .
     - Muy importante recordar la constraseña y puerto ingresado.
-    - La instalación estándar es suficiente.
-	- Configuración: Crear una base de datos llamada "OCDS" usando pgAdmin. Recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI) .
+    - La instalación estándar es suficiente, no es necesario instalar StackBuilder.
+	- Configuración: Abrir pgAdmin4 (viene por defecto, ingresar contraseña, y crear una base de datos llamada "OCDS". Para esto recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI) .
 
 3. Configuración de aplicativo:
     - Clonar o descargar este repositorio en su computador.
