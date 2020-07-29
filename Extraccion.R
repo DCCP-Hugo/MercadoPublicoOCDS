@@ -68,9 +68,7 @@ fechaInicial <- as.Date('2020-01-01')
 fechaFinal <- as.Date('2020-07-01')
 
 
-
-
-
+#FIN ZONA DE INPUTS
 
 
 #USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
