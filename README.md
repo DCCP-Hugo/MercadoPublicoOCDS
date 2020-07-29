@@ -4,12 +4,13 @@
   * [Demo](#demo)
   * [Resumen](#resumen)
   * [Motivación](#motivación)
+  * [Alcance](#alcance)
   * [Instalación](#instalación)
   * [Agradecimientos](#agradecimientos)
   * [Benchmarking](#benchmarking)
 
 ## Resumen
-Se desarrolla una aplicación en R, que bajo el ingreso de unos pocos parámetros, descarga automáticamente datos masivos de compras públicas en formato OCDS, los almacena en una base de datos Postgress, y permite la visualización en un panel usando Shiny.
+Se desarrolla una aplicación en R, que bajo el ingreso de unos pocos parámetros, descarga automáticamente datos masivos de licitaciones públicas en formato OCDS, los almacena en una base de datos Postgress, y permite la visualización en un panel usando Shiny.
 
 ## Motivación
 Actualmente existe gran interés por parte de distintos actores por información en las compras públicas en Chile. Éstos pueden ser la sociedad civil monitoreando el correcto uso de los fondos públicos, proveedores buscando oportunidades de negocio, entre otros.
@@ -20,11 +21,16 @@ En esta línea, OCP genera un estándar de modelo de datos a nivel global, que p
 
 En favor de lo anterior, [ChileCompra](https://www.chilecompra.cl/) adopta los lineamientos de datos abiertos implementando una [API](https://desarrolladores.mercadopublico.cl/) con estándar de datos [OCDS](https://standard.open-contracting.org/latest/es/) (Open Contracting Data Standard) propuesto por OCP, que permite a cualquier usuario descargar datos de compras públicas tanto en tiempo real, como a través de descargas masivas de datos, teniendo todas las ventajas que el estándar conlleva.
 
-El problema de los datos provenientes de esta API en particular es la gran barrera de entrada en conocimientos tecnológicos que presenta para los usuarios: El entendimiento del negocio de compras públicas, manipulación de listas anidadas en formato JSON, manejo de softwares especializados en datos, el idioma inglés y la manipulación de archivos pesados (1,3 gigabytes app por archivo mensual.) 
+El problema de los datos provenientes de esta API en particular es la gran barrera de entrada en conocimientos tecnológicos que presenta para los usuarios: El entendimiento del negocio de compras públicas, manipulación de listas anidadas en formato JSON, manejo de softwares especializados en datos, el idioma inglés y la manipulación de archivos pesados (1 gigabyte app por archivo mensual.) 
 
 Ante esta problemática, se desarrolla un aplicativo en R cuyo objetivo es servir como “molde” para disminuir algunas de las barreras de entrada en utilización de datos de compras públicas a la ciudadanía, facilitando la extracción, manipulación y visualización de los datos. 
 
 Describiéndolo de manera más específica, el aplicativo desarrollado en R permite la extracción de los archivos de licitaciones en formato OCDS por el usuario, generar un modelo de datos relacionales en una base de datos en PostgreSQL, alimentar tablas relaciones a partir de archivos JSON, utilizar estas mismas tablas para realizar consultas y alimentar un panel con visualizaciones utilizando Shiny, incluyendo métricas de ejemplo que pueden ser de interés tanto para la sociedad civil como para proveedores.
+
+## Alcance y consideraciones
+Licitaciones (públicas y privadas), que hayan sido publicadas desde el 2009 en adelante. Se espera tener descargas masivads de Convenios Marco y Tratos Directos a inicios del año 2021.
+Considera solo las fases de Tender y Award de OCDS.
+Los datos almacenados y visualizados no son la totalidad de campos presentes en los archivos JSON.
 
 ## Instalación
 La instalación se divide en distintas etapas:
