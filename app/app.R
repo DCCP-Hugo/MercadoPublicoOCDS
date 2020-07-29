@@ -663,23 +663,23 @@ server <- function(session,input, output) {
   #Gráfico de burbuja compradores.
   output$PlotCompLic<- renderPlotly({
     GrafCompLic1 <- dataLicAdj9() %>% group_by(nombre_institucion) %>% summarise(., Cantidad = n()) 
-    GrafCompLic2 <- dataLicAdj9() %>% group_by(nombre_institucion) %>% summarise(., Monto = sum(monto_clp, na.rm=TRUE)) 
-    GrafCompLic <- inner_join(GrafCompLic1,GrafCompLic2, by="nombre_institucion") %>% arrange(desc(Monto,Cantidad)) 
-    GrafCompLic <- GrafCompLic %>% filter(., !is.na(Monto))
+    GrafCompLic2 <- dataLicAdj9() %>% group_by(nombre_institucion) %>% summarise(., Transado = sum(monto_clp, na.rm=TRUE)) 
+    GrafCompLic <- inner_join(GrafCompLic1,GrafCompLic2, by="nombre_institucion") %>% arrange(desc(Transado,Cantidad)) 
+    GrafCompLic <- GrafCompLic %>% filter(., !is.na(Transado))
     GrafCompLic <- head(GrafCompLic,30)
-
+    
     key <- GrafCompLic$nombre_institucion
     p<- plot_ly(GrafCompLic, 
                 x = ~Cantidad, 
-                y = ~Monto, type = 'scatter', mode = 'markers', color = ~nombre_institucion, colors = 'Paired',
+                y = ~Transado, type = 'scatter', mode = 'markers', color = ~nombre_institucion, colors = 'Paired',
                 #variables para unir con filtros
                 source = "PlotCompLic",
                 key = ~key,
                 #customdata = ~customdata,
-                size = ~Monto,sizes = c(10, 50),
+                size = ~Transado,sizes = c(10, 50),
                 marker = list( opacity = 0.5,sizemode= 'diameter'),
                 hoverinfo = 'text',
-                text = ~paste('<b>Institución:</b>', nombre_institucion, '<br><b>Cantidad Lic:</b>', comma3(Cantidad),'<br><b>Monto Lic:</b>', trimws(comma3(Monto)) )) %>%
+                text = ~paste('<b>Institución:</b>', nombre_institucion, '<br><b>Cantidad Lic:</b>', comma3(Cantidad),'<br><b>Transado Lic:</b>', trimws(comma3(Transado)) )) %>%
       layout(title = '<b>Montos(CLP) vs cantidad de Lic por Comprador</b>',
              xaxis = list(showgrid = FALSE),
              yaxis = list(showgrid = FALSE),
@@ -688,9 +688,10 @@ server <- function(session,input, output) {
   })
   
   
+  
   #Gráfico de burbuja Proveedores.
-    output$PlotProvLic<- renderPlotly({
-      if(input$RadioLic == "publicacion"){
+  output$PlotProvLic<- renderPlotly({
+    if(input$RadioLic == "publicacion"){
     }else{
       #Identificar licitaciones que solo tengan 1 proveedor adjudicado
       #Abarca aproximadamente el 82% de todas las licitaciones en los últimos 3 meses
@@ -698,19 +699,19 @@ server <- function(session,input, output) {
       #Join con tabla licitaciones para obtener todos los campos de licitación y montos
       DetalleProvPlot2 <- inner_join(dataLicAdj9(),DetalleProvPlot, by ='id_lic')
       #Ahora, juntarlo con licitaciones para obtener monto
-
+      
       DetalleProvPlot3 <- inner_join(DetalleProvPlot2,dataLicProv(),by ='id_lic' ) %>% group_by(nombre_empresa ) %>% 
         summarise(.,Transado = sum(monto_clp))
-
+      
       DetalleProvPlot4 <- inner_join(DetalleProvPlot2,dataLicProv(),by ='id_lic' ) %>% group_by(nombre_empresa ) %>% 
-        summarise(.,Cant_Lic= n())
+        summarise(.,Cantidad= n())
       DetalleProvPlot5 <- inner_join(DetalleProvPlot3,DetalleProvPlot4, by='nombre_empresa') %>% arrange(., desc(Transado))
-    
+      
       DetalleProvPlot5 <-head(DetalleProvPlot5,30)
       #gráfico
       key <- DetalleProvPlot5$nombre_empresa
       p<- plot_ly(DetalleProvPlot5, 
-                  x = ~Cant_Lic, 
+                  x = ~Cantidad, 
                   y = ~Transado, type = 'scatter', mode = 'markers', color = ~nombre_empresa, colors = 'Paired',
                   #variables para unir con filtros
                   source = "PlotProvLic",
@@ -719,8 +720,8 @@ server <- function(session,input, output) {
                   size = ~Transado,sizes = c(10, 50),
                   marker = list( opacity = 0.5,sizemode= 'diameter'),
                   hoverinfo = 'text',
-                  text = ~paste('<b>Proveedor:</b>', nombre_empresa, '<br><b>Cantidad Lic:</b>', comma3(Cant_Lic),'<br><b>Monto Lic:</b>', trimws(comma3(Transado)) )) %>%
-        layout(title = '<b>Montos(CLP) vs cantidad de Licitaciones adjudicadas por 1 proveedor</b>',
+                  text = ~paste('<b>Proveedor:</b>', nombre_empresa, '<br><b>Cantidad Lic:</b>', comma3(Cantidad),'<br><b>Monto Lic:</b>', trimws(comma3(Transado)) )) %>%
+        layout(title = '<b>Montos(CLP) vs cantidad de Licitaciones<br>adjudicadas por 1 proveedor</b>',
                xaxis = list(showgrid = FALSE),
                yaxis = list(showgrid = FALSE),
                showlegend = FALSE)
@@ -728,8 +729,8 @@ server <- function(session,input, output) {
       
       ggplotly(p)
     }
-    })
-    
+  })
+  
 
   ####Grafico Oferentes por licitación
   output$PlotOferentesLic<- renderPlotly({
