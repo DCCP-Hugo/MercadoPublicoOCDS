@@ -24,26 +24,46 @@ library(stringi)
 library(stringr)
 library(writexl)
 
-#Consideraciones
-
-#El ID del comprador corresponde a la de unidad de compra
-#El nombre del comprador viene de la forma -> Organismo | Unidad de compra
-#Si existe más de un supplier en una licitación, no hay manera de saber quién se adjudicó cuánto
-#Existen licitaciones adjudicadas pero que no poseen adjudicado ni fecha de adjudicación
-#En caso de una fecha que no exista, se agregará la mínima fecha, la cual es 1980-01-01. Intené usar infinity, pero generaba problemas para cargar a R
-#En caso de proveedores es nombre empresa | nombre sucursal
-#Costos unitarios en la gran mayoría son netos, es decir, no poseen descuentos, impuestos o fletes
-#En caso de licitaciones que tengan una etapa "Publicación", el monto es estimado por el comprador.
-#Tener en consideración que hay proveedores que ingresan mal los rubros, o incluso pueden poner nivel 3
-#El estado de licitación "activa" se cambia una vez termine el período de "Award" de una licitación.
-#El cambio de moneda se asocia al mes de la publicación de la licitación
 
 
-################################INPUTS DE USUARIO######################################################################
+#INPUTS DE USUARIO: El usuario debe llenar los siguientes campos.
+################################################################
 
 #Conexión a postgress
-#URL carpeta local en la que se crearán las carpetas a guardar archivos RAR y JSON
-#Fecha inicial y final a extrael en el formato: " ". En caso de querer siempre el último mes, no modificar "AnioFinal"
+# Utilizar la contraseña designada de la instalación de postgress.
+#Llenar entre los " "
+pw <- {
+  " "
+}
+# Carga un objeto postgress (NO CAMBIAR)
+drv <- dbDriver("PostgreSQL")
+
+# en dbname = Agregar la base de datos creada  para cargar las tablas
+#port = .. El port designado en la instalación. Por defecto viene 5432
+#user = , por defecto el superuser se define como postgres
+con <- dbConnect(drv, dbname = "OCDS",
+                 host = "localhost", port = 5432,
+                 user = "postgres", password = pw)
+rm(pw) # remueve la contraseña para 
+
+
+# Ingresar Path de carpeta local en la que se crearán las carpetas a guardar archivos RAR y JSON
+urlTodo <- '..../MercadoPublicoOCDS'
+
+#URL de carpetas específicas donde se guarden los zipFiles y Jsons
+urlZipFile <- '..../MercadoPublicoOCDS/zipFiles' 
+urlJson <- '.../MercadoPublicoOCDS/Jsons'
+
+
+#Fecha inicial y final a extrar el en el formato: " ". En caso de querer siempre el último mes, no modificar "AnioFinal"
+#Ingresar fecha inicial y final en formato yyyy-mm-01 (Dado que la carga es por mes, el día no se modifica). 
+#La aplicación agregara a la base de datos todos los meses entre fechaInicial y fechaFinal.
+#Obs la fecha inicial de los datos en OCDS es el año 2009
+
+fechaInicial <- as.Date('2020-01-01')
+
+#En caso de querer siempre el último mes, utilizar como fecha final el siguiente código -> fechaFinal <- as.Date(today())
+fechaFinal <- as.Date('2020-07-01')
 
 
 
@@ -51,6 +71,10 @@ library(writexl)
 
 
 
+#USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
+#USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
+#USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
+#USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
 #USUARIO NO EXPERIMENTADO EN R: NO MODIFICAR NADA DE AQUÍ EN ADELANTE
 ########################################################################################################################
 ########################################################################################################################
@@ -129,42 +153,16 @@ EstadoLicTrad <- function(texto){
 ############################################################
 #Conexion a Postgres
 ############################################################
-#Pasos necesarios para utilizar postgreSQL:
-#1) Instalar postgress
-#2) Setear el nombre de la base de datos. Por defecto es postgres, pero manualmente creé una llamada OCDS.
-##Intentaré generar esta creación con create database
-#3) 
-
-# create a connection
-# save the password that we can "hide" it as best as we can by collapsing it
-pw <- {
-  "dccp"
-}
-# loads the PostgreSQL driver
-drv <- dbDriver("PostgreSQL")
-# creates a connection to the postgres database
-# note that "con" will be used later in each connection to the database
-con <- dbConnect(drv, dbname = "OCDS",
-                 host = "localhost", port = 5432,
-                 user = "postgres", password = pw)
-rm(pw) # removes the password
-
 
 #Setear encoding a UTF8
 postgresqlpqExec(con, "SET client_encoding = 'UTF8'") 
 
-#####################################################################################
-#DATOS DE CARPETA LOCAL#
-#El usuario debe ingresar URL local donde se guarde todo (Revisar en caso de github)
-#URL carpeta que albergue todas las demás
-urlTodo <- 'C:/Users/esteban.olivares/Documents/visualizaciones/Panel SatRday'
-#####################################################################################
 ############################################################
 #Creacion Tabla postgress licitaciones
 ############################################################
 
 if(dbExistsTable(con, "licitaciones") == FALSE){
-  # specifies the details of the table
+
   #Se le agregan doble quotes para que mantenga la mayuscula en el nombre de la columna
   sql_command <- 'CREATE TABLE "licitaciones"
   (
@@ -202,7 +200,6 @@ if(dbExistsTable(con, "licitaciones") == FALSE){
 #Creacion Tabla postgress Proveedores
 ############################################################
 if(dbExistsTable(con, "proveedores") == FALSE){
-  # specifies the details of the table
   #Se le agregan doble quotes para que mantenga la mayuscula en el nombre de la columna
   sql_command <- 'CREATE TABLE "proveedores"
   (
@@ -227,7 +224,6 @@ if(dbExistsTable(con, "proveedores") == FALSE){
 #Creacion Tabla postgress Items
 ############################################################
 if(dbExistsTable(con, "items") == FALSE){
-  # specifies the details of the table
   #Se le agregan doble quotes para que mantenga la mayuscula en el nombre de la columna
   sql_command <- 'CREATE TABLE "items"
   (
@@ -254,7 +250,6 @@ if(dbExistsTable(con, "items") == FALSE){
 ############################################################
 
 if(dbExistsTable(con, "rubros") == FALSE){
-  # specifies the details of the table
   #Se le agregan doble quotes para que mantenga la mayuscula en el nombre de la columna
   sql_command <- 'CREATE TABLE "rubros"
   (
@@ -317,28 +312,45 @@ if(dbExistsTable(con, "cambio_moneda") == FALSE){
 ########################################################################################################################
 ########################################################################################################################
 
-
 ############################################################
 #Extracción Conversiones de moneda mensual
 ############################################################
-#Extraer el dia 15 de cada mes de los últimos n años y transformar a CLP
 
-##Generar una lista con fechas de formato dd-mm-yyyy
-##Generar una lista con cada tipo de moneda dedse 2009
-AnioInicioAPI<-2020
-#Se genera la ficha final de extracción del cambio de moneda, el cual será el primer día del mes actual
-FechaFinalAPI <- ymd(Sys.Date()) %>% floor_date(., "month")
+#Paso previo: Identificación de años a llenar en base de datos
+
+#Primera casuística: Base de datos se encuentra vacía
+AnioInicioAPI<-2009
 AnioFinalAPI <- year(Sys.Date())
+TodosAniosMoneda <- AnioInicioAPI:AnioFinalAPI
 
-#Generar listado de anios
-ListAnio <- AnioInicioAPI:AnioFinalAPI
+#Query para tener el número de filas de tabla cambio moneda
+nFilaMoneda <- (dbGetQuery(con, "select count(*) from cambio_moneda"))
+
+#Caso 1, tabla está vacía
+if(nFilaMoneda$count[1] ==0 ){
+  ListAnio <- TodosAniosMoneda
+} else{
+  #Caso 2: Tabla posee solo algunos años
+  p<-1
+  ListAnioAux <- vector()
+  for(k in  1:length(TodosAniosMoneda)) { 
+    AnioMonedaAux <- (dbGetQuery(con, paste0("select count(*) from cambio_moneda where anio = ",TodosAniosMoneda[k])))
+    if(AnioMonedaAux$count[1] == 0){
+      ListAnioAux[p] <- TodosAniosMoneda[k]
+      p<-p+1
+    }
+  }
+  #Agregar último año en caso que no lo posea. Con esto me aseguro que el último año siempre esté actualizado y posea un elemento
+  if(AnioFinalAPI %in% ListAnioAux){} else { ListAnioAux <- c(ListAnioAux, AnioFinalAPI)}
+  ListAnio <- ListAnioAux
+}
 
 #Generar listados de monedas
 ListaMonedas<- c("uf","utm","euro","dolar") 
 
 ##################################################################################################################
 #Extraer todos los cambios de moneda diarios por moneda desde consulta API anual, y guardarlos como mensual.
-#Se utiliza API https://mindicador.cl/api/ dado que no requiere registro
+#Se utiliza API https://mindicador.cl/api/ dado que no requiere registro copmo en el banco central
 #Carga inicial de tabla
 
 #UF tiene datos todos los días
@@ -346,7 +358,7 @@ ListaMonedas<- c("uf","utm","euro","dolar")
 #Dolar está solo agunos datos (248 del anio)
 #Euro está solo agunos datos (248 del anio)
 
-#Dado lo anterior, se genera un proceso distinto para cada unida y después se combinan.
+#Dado lo anterior, se genera un proceso distinto para cada unidad y después se combinan.
 
 #Ingresando UTM
 
@@ -375,7 +387,6 @@ for( i in 1: length(ListaMonedas)){
         #Llevo cambio de moneda diaria a mensual filtrando por el primer día de cada mes:
         DFMonedaAnioMes <- DFMonedaAnioDia %>% filter(., day(fecha) ==01)
         
-        #print(k)
 
       } else{
         
@@ -397,7 +408,7 @@ for( i in 1: length(ListaMonedas)){
           DFMonedaAnioMesAux <- DFMonedaAnioDia %>% filter(., day(fecha) ==01)
           DFMonedaAnioMes<- bind_rows(DFMonedaAnioMes,DFMonedaAnioMesAux)
           
-          #print(k)
+ 
       }
       
     }
@@ -425,8 +436,7 @@ for( i in 1: length(ListaMonedas)){
         #Llevo cambio de moneda diaria a mensual filtrando por el primer día de cada mes:
         DFMonedaAnioMesAux <- DFMonedaAnioDia
         DFMonedaAnioMes<- bind_rows(DFMonedaAnioMes,DFMonedaAnioMesAux)
-        # print(k)
-        
+
       } else{
       
         urlAPIMonedaAnio<- paste0('https://mindicador.cl/api/',ListaMonedas[i],'/',ListAnio[k])
@@ -481,7 +491,7 @@ for( i in 1: length(ListaMonedas)){
         
       } else{
         
-        # for(j in 1: length(MonedaJsonAnio$serie) ){
+
         urlAPIMonedaAnio<- paste0('https://mindicador.cl/api/',ListaMonedas[i],'/',ListAnio[k])
         GETAPIMonedaAnio <- GET(urlAPIMonedaAnio)
         MonedaJsonAnio <- fromJSON(content(GETAPIMonedaAnio, "text"), simplifyVector = FALSE)
@@ -510,7 +520,7 @@ for( i in 1: length(ListaMonedas)){
     }
     
   }
-
+  
 }
 
 #Separando fecha en anio, mes y dia
@@ -528,25 +538,14 @@ for(p in 1: nrow(DFMonedaAnioMes)){
   }
 }
 
-#Insertando a tabla postgress. En caso de estar vacía la rellena, y en caso contrario borra todo y re inserta.
-nmoneda <- dbGetQuery(con, 'select count(*) from cambio_moneda')
-if(nmoneda$count ==0){
-  #Importar csv a dataframe y subir a tabla rubros. (Se debe sacar de local)
+if(nFilaMoneda$count ==0){
   dbWriteTable(con, 'cambio_moneda', DFMonedaAnioMes,row.names=FALSE,append=TRUE)
 }else{
-  #Eliminar todos los datos
-  dbSendQuery(con, paste0('delete from cambio_moneda'))
+
+  dbSendQuery(con, paste0('delete from cambio_moneda where anio =',AnioFinalAPI ))
   dbCommit(con)
   dbWriteTable(con, 'cambio_moneda', DFMonedaAnioMes,row.names=FALSE,append=TRUE)
 }
-
-#################################################################
-#Extracción Conversiones de moneda anual y llegar a tabla postgress
-#################################################################
-
-#Se transformará todo a CLP
-#Utilizar la API Miindicador para crear una tabla con los tipos de cambio anual
-
 
 ########################################################################################################################
 ########################################################################################################################
@@ -561,43 +560,18 @@ if(nmoneda$count ==0){
 #Extracción de histórico
 #Creación de carpeta para guardar zip files en caso que no se haya creado
 #Se debe redirigir las direcciones de las carpetas
-#URL carpeta que albergue todas las demás
-urlTodo <- 'C:/Users/esteban.olivares/Documents/visualizaciones/Panel SatRday'
-
-#Debe ser ingresado por el usuario
-urlZipFile <- 'C:/Users/esteban.olivares/Documents/visualizaciones/Panel SatRday/zipFiles' 
-urlJson <- 'C:/Users/esteban.olivares/Documents/visualizaciones/Panel SatRday/Jsons'
-
-
-if( !dir.exists(urlZipFile )){
-  dir.create(urlZipFile,showWarnings = FALSE)
-  
-}
-
-#Creación de carpeta local para archivos descomprimidos de zipFile
-
-if( !dir.exists(urlJson)){
-  dir.create(urlJson,showWarnings = FALSE)
-}
 
 ######################################################################
 #Iteración por archivo mensual
 #######################################################################
-
-#Ingresar fecha inicial y final en formato yyyy-mm-dd
-fechaInicial <- as.Date('2020-05-01')
-# fechaFinal <- as.Date(today())
-fechaFinal <- as.Date('2020-07-01')
 
 #Rango de todos los meses entre las fechas
 listaFechas <- seq.Date(fechaInicial, fechaFinal, by="month")
 #Pasar a formato legible por API
 listaFechas <- FormatoFechaURL(listaFechas)
 
-# fechaTest <- 201901
 
 for(j in 1:length(listaFechas)){
-  # j<-1
   fechaIter <- listaFechas[j]
   urlDM <- paste0('https://ocds.blob.core.windows.net/ocds/',fechaIter,'.zip')
   download.file(urlDM, paste0(urlZipFile,'/',fechaIter,'.zip'))
@@ -695,38 +669,12 @@ for(j in 1:length(listaFechas)){
   if(nrow(ListArchivosDF) !=0){
     for(k in 1:nrow(ListArchivosDF)){
       
-      #Version para iteración  
       #al estar mal construido un Json, genera un error. Se debe manejar este error con un next.
       LicJson <- read_json(paste0(urlJson,'/', ListArchivosDF$Name[k]), simplifyVector = FALSE)
-      # LicJson <- read_json(paste0(urlJson,'/', ListArchivosDF$Name[139]), simplifyVector = FALSE)
-      
-      
-      # LicJsontest <- read_json(paste0(urlJson2, ListArchivosDF$Name[533]), simplifyVector = FALSE)
-      #Usar esta version que no duplica datosW
       ##Hipotesis: Utilizar el compiled release para todo como ultima version de estado.
       
-      #Este test esta adjudicado
-      # LicJson <- read_json(paste0(URLCarpeta,'363-1-LE19.json'), simplifyVector = FALSE)
-      
-      #Este test no esta adjudicado
-      # LicJson <- read_json(paste0(URLCarpeta,'6-3-LP20.json'), simplifyVector = FALSE)
-      #Crear modelo de datos en postgress
-      
-      #Formatear data frame
-      
-      #Transformar json a df para pasar a postgres
-      
-      
-      #Transacciones realizadas
-      #Crear un filtro basado en si esta en el estado award
-      
-      #Extraer valor de licitacion, se consideran solo adjudicadas
-      #Chequear como identificar adjudicadas: Si existen datos en sección award, entonces esta adjudicada
-      #Falta agregar campos y definir caso cuando tiene más de un proveedor
-      
       ############################################################
-      #DF de licitaciones
-      
+      #Inicializar DF para JSON
       ############################################################
       DFLic <- NULL
       DFProv <- NULL
@@ -735,22 +683,24 @@ for(j in 1:length(listaFechas)){
       DFProv <- as.data.frame(DFProv)
       DFItem <- as.data.frame(DFItem)
       
-      
+      ############################################################
+      #Traduciendo datos de Json a DF
+      ############################################################
       if(length(LicJson$records[[1]]$compiledRelease$awards) !=0){
         
         ocid <- LicJson$records[[1]]$ocid
         id_lic <- LicJson$records[[1]]$compiledRelease$tender$id
-        nombre_lic <- LicJson$records[[1]]$compiledRelease$awards[[1]]$title
-        desc_lic <-  LicJson$records[[1]]$compiledRelease$awards[[1]]$description
-        nombre_institucion<- SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,1)
-        nombre_uncompra<- SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,2)
-        id_uncompra <- LicJson$records[[1]]$compiledRelease$tender$procuringEntity$id
-        region_uncompra <- LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[1]][["address"]][["region"]]
-        fecha_apertura <- LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$startDate
-        fecha_cierre <-LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$endDate
+        nombre_lic <- TransNullNA(LicJson$records[[1]]$compiledRelease$awards[[1]]$title)
+        desc_lic <-  TransNullNA(LicJson$records[[1]]$compiledRelease$awards[[1]]$description)
+        nombre_institucion<- TransNullNA(SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,1))
+        nombre_uncompra<- TransNullNA(SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,2))
+        id_uncompra <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$id)
+        region_uncompra <-TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[1]][["address"]][["region"]])
+        fecha_apertura <- TransNullFecha(LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$startDate)
+        fecha_cierre <- TransNullFecha(LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$endDate)
         fecha_adj <- TransNullFecha(LicJson$records[[1]]$compiledRelease$awards[[1]]$date)
-        estado_lic <- EstadoLicTrad(LicJson$records[[1]]$compiledRelease$awards[[1]]$status)
-        tipo_lic <- LicJson$records[[1]]$compiledRelease$tender$procurementMethodDetails
+        estado_lic <- TransNullNA(EstadoLicTrad(LicJson$records[[1]]$compiledRelease$awards[[1]]$status))
+        tipo_lic <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$procurementMethodDetails)
         etapa_lic <- "adjudicacion"
         monto_est <-TransNullNAN(LicJson$records[[1]]$compiledRelease$tender$value$amount)
         monto_adj <-TransNullNAN(LicJson$records[[1]]$compiledRelease$awards[[1]]$value$amount) 
@@ -774,13 +724,13 @@ for(j in 1:length(listaFechas)){
         desc_lic <-  LicJson$records[[1]]$compiledRelease$tender$description
         nombre_institucion<- SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,1)
         nombre_uncompra<- SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,2)
-        id_uncompra <- LicJson$records[[1]]$compiledRelease$tender$procuringEntity$id
-        region_uncompra <- LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[1]][["address"]][["region"]]
+        id_uncompra <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$id)
+        region_uncompra <- TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[1]][["address"]][["region"]])
         fecha_apertura <- LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$startDate
         fecha_cierre <- TransNullFecha(LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$endDate)
         fecha_adj <- TransNullFecha(LicJson$records[[1]]$compiledRelease$awards[[1]]$date)
-        estado_lic <- EstadoLicTrad(LicJson$records[[1]]$compiledRelease$tender$status)
-        tipo_lic <- LicJson$records[[1]]$compiledRelease$tender$procurementMethodDetails
+        estado_lic <- TransNullNA(EstadoLicTrad(LicJson$records[[1]]$compiledRelease$tender$status))
+        tipo_lic <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$procurementMethodDetails)
         etapa_lic <- "publicacion"
         monto_est <-TransNullNAN(LicJson$records[[1]]$compiledRelease$tender$value$amount)
         monto_adj <- NaN
@@ -807,8 +757,6 @@ for(j in 1:length(listaFechas)){
          length(LicJson$records[[1]]$compiledRelease$awards[[1]]$suppliers)!=0){
         
         #Se genera iteración para encontrar dentro de la lista parties el/los supplier
-
-        #como regla de negocio, el primer valor de parties siempre es el comprador.
         Aux1 <-vector()
         Aux2 <-vector()
         Aux3 <-vector()
@@ -819,10 +767,12 @@ for(j in 1:length(listaFechas)){
         Aux8 <-vector()
         p<-1
         
-        for(r in 2:length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]])){
+        for(r in 1:length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]])){
           #Como regla de negocio, asumo que si posee más de un rol, es un proveedor adjudicado (Debería poseer Tender y Supplier)
 
-          if(length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]]) >1){
+          if(length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]]) >1 &&
+             LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]][[1]] != 'procuringEntity' &&
+             LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]][[1]] != 'buyer'){
             Aux1[p] <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$id) #ID lic
             Aux2[p] <- TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["id"]]) #ID sucursal
             Aux3[p] <- TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["identifier"]][["id"]]) #Rut
@@ -845,7 +795,6 @@ for(j in 1:length(listaFechas)){
       ############################################################
       
       #Observación: Se realiza un llenado por columna a través de vectores, dado que no en todas las licitaciones existen todos los campos. 
-      #V2, se le quita la restricción que sea solo en licitaciones adjudicadas
       if(length(LicJson$records[[1]]$compiledRelease$awards) !=0 &&
          LicJson$records[[1]]$compiledRelease$awards[[1]]$status != "cancelled" &&
          LicJson$records[[1]]$compiledRelease$awards[[1]]$status != "unsuccessful" &&
@@ -908,8 +857,6 @@ for(j in 1:length(listaFechas)){
         #Cambiando cantidades a integer en caso que R me los transforme en notación exponencial.
         DFItem$cantidad <- as.integer(DFItem$cantidad )
         
-        
-        
       }
       
       #Agregar datos a tabla licitaciones
@@ -947,12 +894,4 @@ for(j in 1:length(listaFechas)){
   
 } #Fin loop archivo
 
-
-
-
-
-
-#Generar iterador por mes y año
-#Se debe tener en consideración una fecha inicio y una final, y encontrar la forma de llenar mensualmente las fechas entre medio.
-
-#Descargar archivo en local carpeta de descargables ZIP (Se debe modificar la URL local)
+###############################Fin código###############################################

@@ -37,25 +37,25 @@ Recomiendo seguir las indicaciones de este video:
     - La versión utilizada para RStudio es la 1.1.463
 
 2. Instalación y configuración de Postgress
-Recomiendo seguir las indicaciones del siguiente video:
+Recomiendo seguir las indicaciones del siguiente video hasta el minuto 6:15 :
 [Video explicativo de instalación](https://www.youtube.com/watch?v=cHGaDfzJyY4)
     - Link de descarga: [Link](https://www.postgresql.org/download/)
     - Versión utilizada: 10.10-1 .
     - Muy importante recordar la constraseña y puerto ingresado.
     - La instalación estándar es suficiente, no es necesario instalar StackBuilder.
-	- Configuración: Abrir pgAdmin4 (viene por defecto, ingresar contraseña, y crear una base de datos llamada "OCDS". Para esto recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI) .
+	- Configuración: Abrir la aplicación pgAdmin4, ingresar contraseña indicada en la instalación de PostgreSQL, presionar sobre el ícono de base de datos y seleccionar "Crear nueva base de datos", llamar a esta base de datos "OCDS". Para tener una noción de cómo realizar este paso, recomiendo el siguiente [Video](https://www.youtube.com/watch?v=BW8Sr_ueSJI) .
 
 3. Configuración de aplicativo:
     - Clonar o descargar este repositorio en su computador.
 	- Ejecutar el archivo: __InstalarPackages.R__
-	- Abrir el archivo xxxx y modificar los campos requeridos de conexión a postgress, carpetas locales y rango de fecha a actualizar.
+	- Abrir el archivo __Extraccion.R__ y modificar los campos requeridos de conexión a postgress, carpetas locales y rango de fecha a actualizar.
 	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo.
 	
 ## Utilización de carga de datos
 1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.
-2. Ejecutar el archivo  __ExtraccionDMV5.R__.
+2. Ejecutar el archivo  __Extraccion.R__.
       - Con una muy buena conexión a internet, toma aproximadamente 15 minutos cargar 1 mes de datos.
-	  - Una vez terminada la ejecución de __ExtraccionDMV5.R__ , es posible realizar consultas en la base de datos PostgreSQL.
+	  - Una vez terminada la ejecución de __Extraccion.R__ , es posible realizar consultas en la base de datos PostgreSQL.
 	  - Se recomienda encarecidamente revisar la [metadata](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Metadata.csv).
 		
 
@@ -64,7 +64,7 @@ Recomiendo seguir las indicaciones del siguiente video:
 
 
 ## Utilización de visualización shiny
-1. Indicar en archivo __ExtraccionDMV5.R__ los meses a extraer en sección inicial del código.	  
+1. Indicar en archivo __Extraccion.R__ los meses a extraer en sección inicial del código.	  
 	- Agregar en el archivo app.R dentro de la carpeta app, los datos de la conexión a PostgreSQL requeridos al inicio del archivo.
 	- Ejecutar visualización.
 	- Cliquear en la pequeña tuerca azul cercana a la esquina superior izquierda.
@@ -78,8 +78,8 @@ Recomiendo seguir las indicaciones del siguiente video:
 2. [USA Spending](https://www.usaspending.gov/)
 
 ## Agradecimientos:
-1. [Mi Indicador](https://mindicador.cl)
-2. [Open Contracting Partnership](https://www.open-contracting.org/es)
+1. [Open Contracting Partnership](https://www.open-contracting.org/es)
+2. [Mi Indicador](https://mindicador.cl)
 
 ## Tecnologías utilizadas
 
