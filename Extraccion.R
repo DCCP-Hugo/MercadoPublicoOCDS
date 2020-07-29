@@ -697,7 +697,12 @@ for(j in 1:length(listaFechas)){
         nombre_institucion<- TransNullNA(SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,1))
         nombre_uncompra<- TransNullNA(SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,2))
         id_uncompra <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$id)
-        region_uncompra <-TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[1]][["address"]][["region"]])
+        for(r in 1:length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]])){
+          if(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]][[1]] == 'procuringEntity' ||
+             LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]][[1]] == 'buyer'){
+            region_uncompra <-TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["address"]][["region"]])
+          }
+        }        
         fecha_apertura <- TransNullFecha(LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$startDate)
         fecha_cierre <- TransNullFecha(LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$endDate)
         fecha_adj <- TransNullFecha(LicJson$records[[1]]$compiledRelease$awards[[1]]$date)
@@ -727,7 +732,14 @@ for(j in 1:length(listaFechas)){
         nombre_institucion<- SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,1)
         nombre_uncompra<- SepTexto(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$name,2)
         id_uncompra <- TransNullNA(LicJson$records[[1]]$compiledRelease$tender$procuringEntity$id)
-        region_uncompra <- TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[1]][["address"]][["region"]])
+        
+        for(r in 1:length(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]])){
+          if(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]][[1]] == 'procuringEntity' ||
+             LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["roles"]][[1]] == 'buyer'){
+            region_uncompra <-TransNullNA(LicJson[["records"]][[1]][["compiledRelease"]][["parties"]][[r]][["address"]][["region"]])
+          }
+        }
+        
         fecha_apertura <- LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$startDate
         fecha_cierre <- TransNullFecha(LicJson$records[[1]]$compiledRelease$tender$tenderPeriod$endDate)
         fecha_adj <- TransNullFecha(LicJson$records[[1]]$compiledRelease$awards[[1]]$date)
