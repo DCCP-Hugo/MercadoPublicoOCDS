@@ -6,8 +6,12 @@
   * [Motivación](#motivación)
   * [Alcance](#alcance)
   * [Instalación](#instalación)
+  * [Modelo de datos](#modelo de datos)
   * [Agradecimientos](#agradecimientos)
   * [Benchmarking](#benchmarking)
+
+## Demo
+[<img target="_blank" src="https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/EjemploViz.png" width=400>](https://github.com/DCCP-Hugo/MercadoPublicoOCDS/blob/master/Im%C3%A1genes/EjemploViz.png)
 
 ## Resumen
 Se desarrolla una aplicación en R, que bajo el ingreso de unos pocos parámetros, descarga automáticamente datos masivos de licitaciones públicas en formato OCDS, los almacena en una base de datos Postgress, y permite la visualización en un panel usando Shiny.
@@ -28,8 +32,12 @@ Ante esta problemática, se desarrolla un aplicativo en R cuyo objetivo es servi
 Describiéndolo de manera más específica, el aplicativo desarrollado en R permite la extracción de los archivos de licitaciones en formato OCDS por el usuario, generar un modelo de datos relacionales en una base de datos en PostgreSQL, alimentar tablas relaciones a partir de archivos JSON, utilizar estas mismas tablas para realizar consultas y alimentar un panel con visualizaciones utilizando Shiny, incluyendo métricas de ejemplo que pueden ser de interés tanto para la sociedad civil como para proveedores.
 
 ## Alcance y consideraciones
-Licitaciones (públicas y privadas), que hayan sido publicadas desde el 2009 en adelante. Se espera tener descargas masivads de Convenios Marco y Tratos Directos a inicios del año 2021.
+Solo Licitaciones (públicas y privadas), que hayan sido publicadas desde el 2009 en adelante. 
+
+Se espera tener descargas masivads de Convenios Marco y Tratos Directos a inicios del año 2021.
+
 Considera solo las fases de Tender y Award de OCDS.
+
 Los campos almacenados y visualizados no son la totalidad de campos presentes en los archivos JSON.
 
 ## Instalación

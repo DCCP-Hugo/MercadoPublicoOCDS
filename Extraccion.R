@@ -1,10 +1,9 @@
 ##################################################
 ## Proyecto: Extraccion de datos para panel licitaciones
 ## Descripción: Extraer datos desde descargas masivas en formato OCDS para ser usadas en visualizacion
-## Fecha:27-02-2020
+## Fecha:29-07-2020
 ## Autor: Hugo Gallardo
 ## Contacto: hugo.gallardo@chilecompra.cl
-## Versión:5.0
 ################################################## 
 
 #Paquetes usados
@@ -24,6 +23,9 @@ library(stringi)
 library(stringr)
 library(writexl)
 
+################################################################
+################################################################
+################################################################
 
 
 #INPUTS DE USUARIO: El usuario debe llenar los siguientes campos.
