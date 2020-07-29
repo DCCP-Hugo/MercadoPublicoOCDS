@@ -6,7 +6,7 @@
   * [Motivación](#motivación)
   * [Alcance](#alcance)
   * [Instalación](#instalación)
-  * [Modelo de datos](#modelo de datos)
+  * [Modelo de datos](#modelodedatos)
   * [Agradecimientos](#agradecimientos)
   * [Benchmarking](#benchmarking)
 
