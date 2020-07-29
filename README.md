@@ -30,7 +30,7 @@ Describiéndolo de manera más específica, el aplicativo desarrollado en R perm
 ## Alcance y consideraciones
 Licitaciones (públicas y privadas), que hayan sido publicadas desde el 2009 en adelante. Se espera tener descargas masivads de Convenios Marco y Tratos Directos a inicios del año 2021.
 Considera solo las fases de Tender y Award de OCDS.
-Los datos almacenados y visualizados no son la totalidad de campos presentes en los archivos JSON.
+Los campos almacenados y visualizados no son la totalidad de campos presentes en los archivos JSON.
 
 ## Instalación
 La instalación se divide en distintas etapas:
