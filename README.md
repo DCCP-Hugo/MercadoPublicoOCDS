@@ -35,7 +35,7 @@ Describiéndolo de manera más específica, el aplicativo desarrollado en R perm
 ## Alcance y consideraciones
 Solo Licitaciones (públicas y privadas), que hayan sido publicadas desde el 2009 en adelante. 
 
-Se espera tener descargas masivads de Convenios Marco y Tratos Directos a inicios del año 2021.
+Se espera tener descargas masivas de Convenios Marco y Tratos Directos a finales del año 2020.
 
 Considera solo las fases de Tender y Award de OCDS.
 
